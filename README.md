@@ -1,2 +1,5 @@
 # Trabajo-Fti
-Fundamentos Teoricos de Informatica,trabajo final de la cursada.
+1.Participantes
+  Lucas Ruiz
+  Jordan Sandoval Molina
+  Matias Segurado
