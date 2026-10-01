@@ -30,3 +30,5 @@ luces_nfa = NFA(
     initial_state='q0',
     final_states={'q0', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9'}
 )
+
+luces_nfa.show_diagram(path= "lucesnf.png")
