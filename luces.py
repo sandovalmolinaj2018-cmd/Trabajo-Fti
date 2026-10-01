@@ -1,32 +1,32 @@
-##Codigo del AFND usando la libreria automata-lib
-from automata.fa.dfa import DFA
+from automata.fa.nfa import NFA
 
-# DFA que acepta strings binarios que terminan en '1'
-my_dfa = DFA(
-    states={'q0', 'q1'},
-    input_symbols={'0', '1'},
+# Definición del AFND para el control de luces led del hogar
+luces_nfa = NFA(
+    states={'q0', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10'},
+    input_symbols={'e', 'a', 'b', 'r', 'v', 'z', 'p', 'i', 'g'},
     transitions={
-        'q0': {'0': 'q0', '1': 'q1'},
-        'q1': {'0': 'q0', '1': 'q1'}
+        'q0': {
+            'e': {'q1', 'q2', 'q3', 'q4', 'q10'} # Al encender puede ir de forma no determinística a varios colores o patrones
+        },
+        'q1': {
+            'a': {'q0'}, 'r': {'q2'}, 'v': {'q3'}, 'z': {'q4'}, 'p': {'q10'}, 'i': {'q5'}
+        },
+        'q2': {
+            'a': {'q0'}, 'b': {'q1'}, 'v': {'q3'}, 'z': {'q4'}, 'p': {'q10'}, 'i': {'q6'}
+        },
+        'q3': {
+            'a': {'q0'}, 'b': {'q1'}, 'r': {'q2'}, 'z': {'q4'}, 'p': {'q10'}, 'i': {'q7'}
+        },
+        'q4': {
+            'a': {'q0'}, 'b': {'q1'}, 'r': {'q2'}, 'v': {'q3'}, 'p': {'q10'}, 'i': {'q8'}
+        },
+        'q5': {'a': {'q0'}, 'b': {'q1'}},
+        'q6': {'a': {'q0'}, 'r': {'q2'}},
+        'q7': {'a': {'q0'}, 'v': {'q3'}},
+        'q8': {'a': {'q0'}, 'z': {'q4'}},
+        'q9': {'a': {'q0'}, 'p': {'q10'}},
+        'q10': {'b': {'q5'}, 'r': {'q6'}, 'v': {'q7'}, 'z': {'q8'}, 'a': {'q0'}, 'g': {'q9'}}
     },
     initial_state='q0',
-    final_states={'q1'}
-)
-# Probar entradas
-print(my_dfa.accepts_input('01'))      # True (termina en 1)
-print(my_dfa.accepts_input('010'))     # False (termina en 0)
-print(my_dfa.accepts_input('111'))     # True (termina en 1)
-
-my_dfa.show_diagram(path="diagrama.png")
-
-diagrama = DFA(
-    states= {'q0', 'q1', 'q2'},
-    input_symbols= {'0', '1'},
-    transitions= {
-        'q0': {'0': 'q0', '1': 'q1'},
-        'q1': {'0': 'q2', '1': 'q1'},
-        'q2': {'0': 'q2', '1': 'q2'}
-    },
-    initial_state= 'q0',
-    final_states= {'q1'}
+    final_states={'q0', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9'}
 )
