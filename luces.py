@@ -26,7 +26,7 @@ diagrama = DFA(
         'q0': {'0': 'q0', '1': 'q1'},
         'q1': {'0': 'q2', '1': 'q1'},
         'q2': {'0': 'q2', '1': 'q2'}
-    }
+    },
     initial_state= 'q0',
     final_states= {'q1'}
 )
