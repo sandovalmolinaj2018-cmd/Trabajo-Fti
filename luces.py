@@ -1,6 +1,5 @@
 from automata.fa.nfa import NFA
 
-# Definición del AFND para el control de luces led del hogar
 luces_nfa = NFA(
     states={'q0','q1','q2','q3','q4','q5','q6','q7','q8','q9','q10'},
     input_symbols={'e','a','b','r','v','z','p','i','g'},
@@ -31,25 +30,12 @@ luces_nfa = NFA(
     final_states={'q0', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9'}
 )
 
+luces_nfa.show_diagram(path="diagrama.png")
 
-# traducido = {
-#     "q0": "Apagado",
-#     "q1": "Blanco",
-#     "q2": "Rojo",
-#     "q3": "Verde",
-#     "q4": "Azul",
-#     "q5": "Intermitente blanco",
-#     "q6": "Intermitente rojo",
-#     "q7": "Intermitente verde",
-#     "q8": "Intermitente azul",
-#     "q9": "Patron RGB",
-#     "q10": "Menu Patrones",
-# }
-
-def traduccionEstado(cadenaPalabra: str): #Funcion que traduce el reado_input para poder ver a que hace referencia el estado
+def traduccionEstado(cadenaPalabra: str): 
    estadoActual = luces_nfa.read_input(cadenaPalabra)
 
-   traducido ={ #Diccionario en donde estan todos los posibles estados
+   traducido ={ 
         frozenset({'q1'}): "Blanco",
         frozenset({'q0'}): "Apagado",
         frozenset({'q2'}): "Rojo",
@@ -64,6 +50,7 @@ def traduccionEstado(cadenaPalabra: str): #Funcion que traduce el reado_input pa
     }
    print(estadoActual)
    return traducido.get(estadoActual, "Error")
+
 
 comandos= """ 
 e = Encender  
@@ -96,33 +83,4 @@ while ejecucion:
         ejecucion = False
 
 print(f"Hasta luego!!!")     
-
-    
-         
-
-    
-
-
-#revisa si la cadena es valida
-# for palabra in palabrasPrueba:
-#     print(f"La palabra es: {palabra}")
-#     if luces_nfa.accepts_input(palabra):
-#         print("La cadena es aceptada")
-#     else:
-#         print("Cadena no aceptada")
-
-#dice el estado final
-# estados_finales = luces_nfa.read_input('ebzpb')
-# print(estados_finales)
-
-# #permite ver todos los caminos cuando estamos en alguna estado
-# transiciones_q0 = luces_nfa.transitions.get('q5', {})
-
-# for simbolo, destinos in transiciones_q0.items():
-#     print(f"Símbolo '{simbolo}' te lleva a -> {destinos}")
-
-# #Revisa todas las posibilidades a medida que se avanza con la cadena
-# for paso, estados in enumerate(luces_nfa.read_input_stepwise('ebzpb')):
-#     print(f"Paso {paso}: {estados}")
-
 
