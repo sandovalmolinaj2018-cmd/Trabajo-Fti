@@ -1,60 +1,30 @@
 # Trabajo Práctico: Control de Iluminación Inteligente con Autómatas (FTI)
 
-Proyecto desarrollado para la materia **Fundamentos Teóricos de Informática (FTI)**. Consiste en la implementación de un **Autómata Finito No Determinístico (AFND)** en Python utilizando la librería `automata-lib` para modelar y controlar el sistema de iluminación inteligente de un hogar.
-
+Proyecto universitario desarrollado para la materia **Fundamentos Teóricos de Informática (FTI)**.
+Consiste en la implementación de un **Autómata Finito No Determinístico (AFND)** en Python utilizando la librería `automata-lib` para modelar y controlar el sistema de iluminación inteligente de un hogar.
 
 ---
-
 
 ## Integrantes
 
-* Lucas Ruiz
-* Jordan Sandoval Molina
-* Matias Segurado
-
+- Lucas Ruiz
+- Jordan Sandoval Molina
+- Matías Segurado
 
 ---
-
 
 ## Descripción del Problema
 
-El objetivo de este proyecto es simular mediante autómatas el funcionamiento de una aplicación móvil de control de iluminación LED hogareña. El usuario puede interactuar con el sistema mediante comandos para:
-* Encender y apagar las luces.
-* Cambiar entre diferentes colores estáticos (Blanco, Rojo, Verde, Azul).
-* Activar modos intermitentes para cada color.
-* Seleccionar patrones dinámicos de iluminación (como el modo RGB / Arcoíris).
-
-
----
-
-
-##Requisitos e Instalación
-
-Este proyecto utiliza la librería [automata-lib](https://caleb531.github.io/automata/) para la definición, validación y representación gráfica de autómatas en Python.
-
-
-### 1. Clonar el repositorio o descargar los archivos
-Asegúrate de tener el archivo `luces.py` en tu directorio de trabajo.
-
-
-### 2. Instalar la librería principal
-Instala la biblioteca base mediante `pip`:
-```bash
-pip install automata-lib
-```
-
-
-### 3. Instalar dependencias visuales (Opcional)
-Para generar y exportar el diagrama gráfico del autómata (`diagrama.png`), es necesario contar con Graphviz en tu sistema y las dependencias de visualización:
-```bash
-pip install 'automata-lib[visual]'
-```
+El objetivo de este proyecto es modelar mediante autómatas el funcionamiento de una aplicación de control de iluminación LED. 
+El usuario puede interactuar con el sistema mediante comandos para:
+* **Encender y apagar** las luces.
+* **Cambiar entre diferentes colores estáticos** (Blanco, Rojo, Verde, Azul).
+* **Activar modos intermitentes** para cada color.
+* **Acceder a distintos patrones dinámicos** de iluminación (como el modo RGB / Intermitente).
 
 ---
-
 
 ## Especificación Formal del Autómata
-
 ### 1. Estados ($S$)
 El autómata cuenta con 11 estados que representan las diferentes combinaciones de encendido, color y patrones:
 
@@ -75,6 +45,8 @@ El autómata cuenta con 11 estados que representan las diferentes combinaciones 
 ### 2. Alfabeto ($\Sigma$)
 Los símbolos de entrada válidos que la máquina reconoce corresponden a las acciones del usuario:
 
+$$\Sigma = \{e, a, b, r, v, z, p, i, g\}$$
+
 * **`e`**: Encender
 * **`a`**: Apagar
 * **`b`**: Blanco
@@ -85,7 +57,30 @@ Los símbolos de entrada válidos que la máquina reconoce corresponden a las ac
 * **`i`**: Intermitente
 * **`g`**: RGB
 
-$$\Sigma = \{e, a, b, r, v, z, p, i, g\}$$
+ ###3. Estado inicial y Estados de Aceptacion
+ - **Estado inicial:** $q_0$ (El sistema inicia apagado).
+ - **Conjunto de estados de aceptación:** $F = \{q_0\}$ (Se considera un ciclo cerrado y seguro cuando el dispositivo regresa a su estado apagado).
+
+---
+
+## Requisitos e Instalación
+
+Este proyecto utiliza la librería [automata-lib](https://caleb531.github.io/automata/) para la definición, validación y representación gráfica de autómatas en Python.
+
+### 1. Clonar el repositorio o descargar los archivos
+Asegúrate de tener el archivo `luces.py` en tu directorio de trabajo.
+
+### 2. Instalar la librería principal
+Instala la biblioteca base mediante `pip`:
+```bash
+pip install automata-lib
+```
+
+### 3. Instalar dependencias visuales (Opcional)
+Para generar y exportar el diagrama gráfico del autómata (`diagrama.png`), es necesario contar con Graphviz en tu sistema y las dependencias de visualización:
+```bash
+pip install 'automata-lib[visual]'
+```
 
 ---
 
@@ -104,3 +99,4 @@ Durante la ejecución, la consola te guiará permitiéndote ingresar letras o co
 ## Diagrama de Transiciones
 
 El script incluye llamadas a la función `show_diagram()` de `automata-lib`, la cual compila el comportamiento del AFND y genera una representación gráfica completa de los estados y sus respectivas transiciones.
+
