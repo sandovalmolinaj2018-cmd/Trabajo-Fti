@@ -92,5 +92,5 @@ Durante la ejecución, la consola te guiará permitiéndote ingresar letras o co
 
 ## Diagrama de Transiciones
 
-El script incluye llamadas a la función `show_diagram()` de `automata-lib`, la cual compila el comportamiento del AFND y genera una representación gráfica completa de los estados y sus respectivas transiciones.
+El proyecto aprovecha la función show_diagram() de la clase NFA de automata-lib. Al ejecutarse, genera automáticamente un archivo diagrama.png con la representación de nodos y aristas rotuladas con los símbolos de $\Sigma$.
 
