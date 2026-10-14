@@ -70,13 +70,7 @@ Este proyecto utiliza la librería [automata-lib](https://caleb531.github.io/aut
 ### 1. Clonar el repositorio o descargar los archivos
 Asegúrate de tener el archivo `luces.py` en tu directorio de trabajo.
 
-### 2. Instalar la librería principal
-Instala la biblioteca base mediante `pip`:
-```bash
-pip install automata-lib
-```
-
-### 3. Instalar dependencias visuales (Opcional)
+### 2. Instalar la librería principal con dependencias visuales
 Para generar y exportar el diagrama gráfico del autómata (`diagrama.png`), es necesario contar con Graphviz en tu sistema y las dependencias de visualización:
 ```bash
 pip install 'automata-lib[visual]'

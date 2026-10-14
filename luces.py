@@ -91,7 +91,7 @@ while ejecucion:
         cadenaPalabra = cadenaPalabra + letraActual   
         print(f"Tu palabra formada por ahora es: {cadenaPalabra}")
         if luces_nfa.accepts_input(cadenaPalabra):
-            print(f"La palabra es aceptada, actualmente te encuntras en el estado de: {traduccionEstado(cadenaPalabra)}")
+            print(f"La palabra es aceptada, actualmente te encuentras en el estado de: {traduccionEstado(cadenaPalabra)}")
         else:
             print(f"La palabra fue rechazada")
             cadenaPalabra = cadenaPalabra[:-len(letraActual)] 
