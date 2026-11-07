@@ -1,55 +1,59 @@
-from automata.fa.nfa import NFA
+from automata.fa.dfa import DFA
+from maquina_moore import MaquinaDeMoore
 
-luces_nfa = NFA(
-    states={'q0','q1','q2','q3','q4','q5','q6','q7','q8','q9','q10'},
-    input_symbols={'e','a','b','r','v','z','p','i','g'},
+# 1. Definición matemática del DFA (El Cerebro)
+# Volcamos exactamente la tabla de transiciones de tu documento.
+# Usamos allow_partial=True para que la librería nos deje omitir las flechas
+# inválidas, dejando que la clase MaquinaDeMoore las rechace automáticamente.
+dfa_foco = DFA(
+    states={'q0', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10'},
+    input_symbols={'e', 'a', 'b', 'r', 'v', 'z', 'p', 'i', 'g'},
     transitions={
-        'q0': {                     
-            'e': {'q1'}            
-        },
-        'q1': {
-            'a': {'q0'}, 'r': {'q2'}, 'v': {'q3'}, 'z': {'q4'}, 'p': {'q10'},'i': {'q5'},'g': {'q9'}
-        },
-        'q2': {
-            'a': {'q0'}, 'b': {'q1'}, 'v': {'q3'}, 'z': {'q4'}, 'p': {'q10'}, 'i': {'q6'}
-        },
-        'q3': {
-            'a': {'q0'}, 'b': {'q1'}, 'r': {'q2'}, 'z': {'q4'}, 'p': {'q10'}, 'i': {'q7'}
-        },
-        'q4': {
-            'a': {'q0'}, 'b': {'q1'}, 'r': {'q2'}, 'v': {'q3'}, 'p': {'q10'}, 'i': {'q8'}
-        },
-        'q5': {'a': {'q0'}, 'b': {'q1'}},
-        'q6': {'a': {'q0'}, 'r': {'q2'}},
-        'q7': {'a': {'q0'}, 'v': {'q3'}},
-        'q8': {'a': {'q0'}, 'z': {'q4'}},
-        'q9': {'a': {'q0'}, 'p': {'q10'}},
-        'q10': {'b': {'q5'}, 'r': {'q6'}, 'v': {'q7'}, 'z': {'q8'}, 'a': {'q0'}, 'g': {'q9'}}
+        'q0':  {'e': 'q1'},
+        'q1':  {'a': 'q0', 'r': 'q2', 'v': 'q3', 'z': 'q4', 'p': 'q10', 'i': 'q5', 'g': 'q9'},
+        'q2':  {'a': 'q0', 'b': 'q1', 'v': 'q3', 'z': 'q4', 'p': 'q10', 'i': 'q6'},
+        'q3':  {'a': 'q0', 'b': 'q1', 'r': 'q2', 'z': 'q4', 'p': 'q10', 'i': 'q7'},
+        'q4':  {'a': 'q0', 'b': 'q1', 'r': 'q2', 'v': 'q3', 'p': 'q10', 'i': 'q8'},
+        'q5':  {'a': 'q0', 'b': 'q1'},
+        'q6':  {'a': 'q0', 'r': 'q2'},
+        'q7':  {'a': 'q0', 'v': 'q3'},
+        'q8':  {'a': 'q0', 'z': 'q4'},
+        'q9':  {'a': 'q0', 'p': 'q10'},
+        'q10': {'a': 'q0', 'b': 'q5', 'r': 'q6', 'v': 'q7', 'z': 'q8', 'g': 'q9'}
     },
     initial_state='q0',
-    final_states={'q0', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10'}
+    final_states={'q0', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10'},
+    allow_partial=True  
 )
 
-luces_nfa.show_diagram(path="diagrama.png")
+# 2. Diccionario de salidas físicas de Moore (El Traductor)
+# Respetamos tus nombres de estados y efectos.
+salidas_foco = {
+    'q0':  "🔌 APAGADA",
+    'q1':  "💡 BLANCA",
+    'q2':  "💡 ROJA",
+    'q3':  "💡 VERDE",
+    'q4':  "💡 AZUL",
+    'q5':  "✨ BLANCA INTERMITENTE",
+    'q6':  "✨ ROJA INTERMITENTE",
+    'q7':  "✨ VERDE INTERMITENTE",
+    'q8':  "✨ AZUL INTERMITENTE",
+    'q9':  "🌈 PATRÓN RGB / ARCOÍRIS",
+    'q10': "⚙️ SELECTOR DE PATRÓN"
+}
 
-traducido ={ 
-        frozenset({'q1'}): "Blanco",
-        frozenset({'q0'}): "Apagado",
-        frozenset({'q2'}): "Rojo",
-        frozenset({'q3'}): "Verde",
-        frozenset({'q4'}): "Azul",
-        frozenset({'q5'}): "Intermitente blanco",
-        frozenset({'q6'}): "Intermitente rojo",
-        frozenset({'q7'}): "Intermitente verde",
-        frozenset({'q8'}): "Intermitente azul",
-        frozenset({'q9'}): "Patron RGB",
-        frozenset({'q10'}): "Menu Patrones",
-   }
+# 3. Instanciamos la Máquina de Moore conectando ambas piezas
+foco_principal = MaquinaDeMoore(dfa_foco, salidas_foco)
 
-def traduccionEstado(cadenaPalabra: str): 
-   estadoActual = luces_nfa.read_input(cadenaPalabra)
-   return traducido.get(estadoActual, "Error")
+# 4. Bucle continuo de interacción
+print("--- Sistema de Iluminación Iniciado ---")
+print("Estado inicial:", foco_principal.obtener_estado_fisico())
+print("Alfabeto:")
+print(" e: Encender | a: Apagar   | b: Blanco | r: Rojo | v: Verde | z: Azul")
+print(" i: Intermit.| p: Patrones | g: RGB")
+print("-" * 45)
 
+<<<<<<< Updated upstream
 def caminos_posibles(cadenaActual: str):  
     estado_actual = luces_nfa.read_input(cadenaActual)
     opciones = []
@@ -96,17 +100,22 @@ while ejecucion:
             print(f"La palabra fue rechazada")
             cadenaPalabra = cadenaPalabra[:-len(letraActual)] 
             caminos_posibles(cadenaPalabra)  
+=======
+while True:
+    comando = input("\nIngresá un comando (o 'salir' para terminar): ").strip().lower()
+    
+    if comando == 'salir':
+        print("Apagando el sistema...")
+        break
+        
+    if len(comando) != 1 or comando not in dfa_foco.input_symbols:
+        print("⚠️ Comando inválido. Usá solo letras del alfabeto.")
+        continue
+        
+    fue_aceptado, salida_actual = foco_principal.procesar_comando(comando)
+    
+    if fue_aceptado:
+        print(f"✅ Transición exitosa -> {salida_actual}")
+>>>>>>> Stashed changes
     else:
-        match letraActual:
-            case "salir":
-                ejecucion = False
-
-            case "comandos":
-                print(comandos)
-
-            case _:
-                print("Error")
-                ejecucion = False
-
-print(f"Hasta luego!!!")     
-
+        print(f"❌ Comando ignorado. El foco sigue: {salida_actual}")
