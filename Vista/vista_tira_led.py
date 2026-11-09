@@ -5,24 +5,63 @@ class VistaTiraLed:
         self.root = root
         self.controlador = None
         self.root.title("Simulador de Tira LED")
-        self.root.geometry("800x450")
+        self.root.geometry("760x560")
+        self.root.minsize(640, 420)
         self.root.configure(bg="#222222")
 
-        # 1. ZONA SUPERIOR: Contenedor para los círculos de la tira LED
-        self.frame_focos = tk.Frame(self.root, bg="#222222")
-        self.frame_focos.pack(pady=50)
-        self.focos_canvas = []  # Acá guardaremos los círculos dibujados
+        # Contenedor desplazable (Canvas + Scrollbar vertical) para garantizar
+        # que todos los controles permanezcan visibles y accesibles en cualquier resolución.
+        self.main_canvas = tk.Canvas(self.root, bg="#222222", highlightthickness=0)
+        self.scrollbar = tk.Scrollbar(self.root, orient="vertical", command=self.main_canvas.yview)
+        self.main_canvas.configure(yscrollcommand=self.scrollbar.set)
 
-        # 2. ZONA INFERIOR: Contenedores para los botones
-        tk.Label(self.root, text="Controles de Color:", bg="#222222", fg="white").pack()
-        self.frame_colores = tk.Frame(self.root, bg="#222222")
-        self.frame_colores.pack(pady=5)
+        self.scrollable_frame = tk.Frame(self.main_canvas, bg="#222222")
+        self.canvas_window = self.main_canvas.create_window(
+            (0, 0), window=self.scrollable_frame, anchor="nw"
+        )
 
-        tk.Label(self.root, text="Controles de Brillo:", bg="#222222", fg="white").pack(pady=(15, 0))
-        self.frame_brillo = tk.Frame(self.root, bg="#222222")
-        self.frame_brillo.pack(pady=5)
+        # Enlace de eventos dinámicos para adaptación de scroll
+        self.scrollable_frame.bind("<Configure>", self._on_frame_configure)
+        self.main_canvas.bind("<Configure>", self._on_canvas_configure)
 
+        # Enlace de eventos de scroll con rueda de ratón (multiplataforma)
+        self.main_canvas.bind("<MouseWheel>", self._on_mousewheel)
+        self.main_canvas.bind("<Button-4>", self._on_mousewheel)
+        self.main_canvas.bind("<Button-5>", self._on_mousewheel)
+        self.root.bind_all("<MouseWheel>", self._on_mousewheel)
+        self.root.bind_all("<Button-4>", self._on_mousewheel)
+        self.root.bind_all("<Button-5>", self._on_mousewheel)
+
+        self.scrollbar.pack(side="right", fill="y")
+        self.main_canvas.pack(side="left", fill="both", expand=True)
+
+        # 1. ZONA SUPERIOR: Contenedor para los círculos de la tira LED (padding reducido a 14)
+        self.frame_focos = tk.Frame(self.scrollable_frame, bg="#222222")
+        self.frame_focos.pack(pady=14)
+        self.focos_canvas = []  # Círculos dibujados
+
+        # 2. ZONA DE CONTROLES: Agrupación ergonómica
+        self.botones = {}
+        self.botones_colores = []
+        self.botones_brillo = []
+        self.boton_deshacer = None
         self._crear_botones()
+
+    def _on_frame_configure(self, event=None):
+        self.main_canvas.configure(scrollregion=self.main_canvas.bbox("all"))
+
+    def _on_canvas_configure(self, event):
+        req_w = self.scrollable_frame.winfo_reqwidth()
+        new_w = max(event.width, req_w)
+        self.main_canvas.itemconfig(self.canvas_window, width=new_w)
+
+    def _on_mousewheel(self, event):
+        if event.num == 4:
+            self.main_canvas.yview_scroll(-1, "units")
+        elif event.num == 5:
+            self.main_canvas.yview_scroll(1, "units")
+        elif hasattr(event, "delta") and event.delta:
+            self.main_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
     def set_controlador(self, controlador):
         self.controlador = controlador
@@ -32,39 +71,160 @@ class VistaTiraLed:
         self.root.after(ms, callback)
 
     def _crear_botones(self):
-        # Botones del autómata de Color
-        colores = [
-            ('e', 'Encender', 'gray'), ('a', 'Apagar', 'black'),
-            ('b', 'Blanco', 'white'), ('r', 'Rojo', 'red'),
-            ('v', 'Verde', 'green'), ('z', 'Azul', 'blue'),
-            ('i', 'Intermitente', 'orange'), ('p', 'Patrones', 'purple'),
-            ('g', 'RGB', 'magenta')
-        ]
-        
-        for comando, texto, color_bg in colores:
-            # Color de letra negro si el fondo es blanco/gris, sino blanco
-            color_fg = "black" if color_bg in ["white", "gray"] else "white"
-            btn = tk.Button(self.frame_colores, text=texto, bg=color_bg, fg=color_fg, width=10,
-                            command=lambda c=comando: self.enviar_comando(c))
-            btn.pack(side="left", padx=3)
+        # Panel Controles de Color y Modos: agrupado en 3 filas equilibradas (<= 550px reqwidth)
+        self.frame_colores = tk.LabelFrame(
+            self.scrollable_frame,
+            text=" Controles de Color y Modos ",
+            bg="#222222",
+            fg="white",
+            font=("Arial", 10, "bold"),
+            padx=6,
+            pady=4,
+            relief="groove"
+        )
+        self.frame_colores.pack(pady=4, padx=6, fill="x")
 
-        # Botones del autómata de Brillo
+        # Fila 1 (Encender, Apagar, Blanco): 3 botones
+        self.frame_colores_r1 = tk.Frame(self.frame_colores, bg="#222222")
+        self.frame_colores_r1.pack(pady=2)
+
+        colores_r1 = [
+            ('e', 'Encender (e)', '#4b5563', 'white', 13),
+            ('a', 'Apagar (a)', '#18181b', 'white', 13),
+            ('b', 'Blanco (b)', '#f3f4f6', 'black', 13),
+        ]
+
+        for comando, texto, bg, fg, width in colores_r1:
+            btn = tk.Button(
+                self.frame_colores_r1,
+                text=texto,
+                bg=bg,
+                fg=fg,
+                activebackground=bg,
+                activeforeground=fg,
+                width=width,
+                relief="raised",
+                cursor="hand2",
+                command=lambda c=comando: self.enviar_comando(c)
+            )
+            btn.pack(side="left", padx=2)
+            self.botones[comando] = btn
+            self.botones_colores.append(btn)
+
+        # Fila 2 (Rojo, Verde, Azul): 3 botones
+        self.frame_colores_r2 = tk.Frame(self.frame_colores, bg="#222222")
+        self.frame_colores_r2.pack(pady=2)
+
+        colores_r2 = [
+            ('r', 'Rojo (r)', '#dc2626', 'white', 13),
+            ('v', 'Verde (v)', '#16a34a', 'white', 13),
+            ('z', 'Azul (z)', '#2563eb', 'white', 13),
+        ]
+
+        for comando, texto, bg, fg, width in colores_r2:
+            btn = tk.Button(
+                self.frame_colores_r2,
+                text=texto,
+                bg=bg,
+                fg=fg,
+                activebackground=bg,
+                activeforeground=fg,
+                width=width,
+                relief="raised",
+                cursor="hand2",
+                command=lambda c=comando: self.enviar_comando(c)
+            )
+            btn.pack(side="left", padx=2)
+            self.botones[comando] = btn
+            self.botones_colores.append(btn)
+
+        # Fila 3 (Animaciones y Patrones): Intermitente (i), Patrones (p), RGB / Arcoíris (g)
+        self.frame_colores_r3 = tk.Frame(self.frame_colores, bg="#222222")
+        self.frame_colores_r3.pack(pady=2)
+
+        colores_r3 = [
+            ('i', 'Intermitente (i)', '#d97706', 'white', 15),
+            ('p', 'Patrones (p)', '#7c3aed', 'white', 15),
+            ('g', 'RGB / Arcoíris (g)', '#db2777', 'white', 17),
+        ]
+
+        for comando, texto, bg, fg, width in colores_r3:
+            btn = tk.Button(
+                self.frame_colores_r3,
+                text=texto,
+                bg=bg,
+                fg=fg,
+                activebackground=bg,
+                activeforeground=fg,
+                width=width,
+                relief="raised",
+                cursor="hand2",
+                command=lambda c=comando: self.enviar_comando(c)
+            )
+            btn.pack(side="left", padx=2)
+            self.botones[comando] = btn
+            self.botones_colores.append(btn)
+
+        # Panel Nivel de Brillo e Historial: 2 filas compactas
+        self.frame_brillo = tk.LabelFrame(
+            self.scrollable_frame,
+            text=" Nivel de Brillo e Historial ",
+            bg="#222222",
+            fg="white",
+            font=("Arial", 10, "bold"),
+            padx=6,
+            pady=4,
+            relief="groove"
+        )
+        self.frame_brillo.pack(pady=4, padx=6, fill="x")
+
+        # Fila 1: 5 niveles de brillo (1 a 5)
+        self.frame_brillo_fila = tk.Frame(self.frame_brillo, bg="#222222")
+        self.frame_brillo_fila.pack(pady=2)
+
         brillos = [
-            ('1', 'Bajo (1)'), ('2', 'Tenue (2)'), ('3', 'Medio (3)'),
-            ('4', 'Alto (4)'), ('5', 'Máximo (5)')
+            ('1', '1: Bajo'),
+            ('2', '2: Tenue'),
+            ('3', '3: Medio'),
+            ('4', '4: Alto'),
+            ('5', '5: Máximo'),
         ]
-        
-        for comando, texto in brillos:
-            btn = tk.Button(self.frame_brillo, text=texto, bg="#444444", fg="white", width=10,
-                            command=lambda c=comando: self.enviar_comando(c))
-            btn.pack(side="left", padx=5)
 
-                # Botón de historial (autómata de pila)
-        tk.Label(self.root, text="Historial:", bg="#222222", fg="white").pack(pady=(15, 0))
-        frame_historial = tk.Frame(self.root, bg="#222222")
-        frame_historial.pack(pady=5)
-        tk.Button(frame_historial, text="Deshacer", bg="#8b4513", fg="white", width=10,
-                  command=lambda: self.enviar_comando('d')).pack()
+        for comando, texto in brillos:
+            btn = tk.Button(
+                self.frame_brillo_fila,
+                text=texto,
+                bg="#374151",
+                fg="white",
+                activebackground="#4b5563",
+                activeforeground="white",
+                width=8,
+                relief="raised",
+                cursor="hand2",
+                command=lambda c=comando: self.enviar_comando(c)
+            )
+            btn.pack(side="left", padx=2)
+            self.botones[comando] = btn
+            self.botones_brillo.append(btn)
+
+        # Fila 2: Botón de historial (autómata de pila): Deshacer (d) destacado
+        self.frame_historial = tk.Frame(self.frame_brillo, bg="#222222")
+        self.frame_historial.pack(pady=2)
+
+        self.boton_deshacer = tk.Button(
+            self.frame_historial,
+            text="↶ Deshacer (d)",
+            bg="#9a3412",
+            fg="white",
+            activebackground="#c2410c",
+            activeforeground="white",
+            width=18,
+            relief="raised",
+            cursor="hand2",
+            command=lambda: self.enviar_comando('d')
+        )
+        self.boton_deshacer.pack(side="left", padx=2)
+        self.botones['d'] = self.boton_deshacer
 
     def enviar_comando(self, comando):
         # Le avisa al controlador qué botón se apretó

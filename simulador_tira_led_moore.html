@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simulador de Tira LED - Máquina de Moore & DFA</title>
+  <title>Simulador de Tira LED - Máquina de Moore & Autómata de Pila (PDA)</title>
   <!-- Tailwind CSS para diseño fluido -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Iconos de Lucide / FontAwesome via CDN -->
+  <!-- Iconos de FontAwesome via CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Fuente Google Inter & Space Grotesk -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -183,42 +183,47 @@
   <header class="max-w-6xl mx-auto w-full mb-6 text-center">
     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 text-xs font-mono mb-2">
       <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-      TEORÍA DE AUTÓMATAS & SISTEMA MOORE
+      TEORÍA DE AUTÓMATAS &bull; MÁQUINA DE MOORE &bull; AUTÓMATA DE PILA (PDA)
     </div>
     <h1 class="text-2xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400 font-mono tracking-tight">
-      Simulador Tira LED Moore
+      Simulador Tira LED Moore & PDA
     </h1>
     <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-xl mx-auto">
-      Control de iluminación mediante autómata de estados finitos determinista (DFA).
+      Control sincrónico de tira LED: Máquina de Moore para color y brillo, con memoria LIFO de retroceso (Autómata de Pila).
     </p>
   </header>
 
   <main class="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
     
-    <!-- SECCIÓN IZQUIERDA: VISUALIZACIÓN DE TIRA LED Y ESTADO ACTUAL -->
+    <!-- SECCIÓN IZQUIERDA: VISUALIZACIÓN DE TIRA LED, TRANSICIONES Y PILA LIFO -->
     <section class="lg:col-span-7 flex flex-col gap-6">
       
       <!-- CONTENEDOR TIRA LED -->
-      <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-4 sm:p-6 shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[260px]">
+      <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-4 sm:p-6 shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[280px]">
         
         <!-- Barra de estado superior de la tira -->
-        <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
+        <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-800 pb-3 mb-4">
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-microchip text-teal-400"></i>
-            <span class="text-xs font-mono uppercase tracking-wider text-slate-300">Tira de Luces Neón (12 LEDs)</span>
+            <span class="text-xs font-mono uppercase tracking-wider text-slate-300">Tira de Luces Neón (5 LEDs)</span>
           </div>
-          <div id="statusBadge" class="px-2.5 py-1 rounded-md text-xs font-semibold font-mono bg-slate-800 text-slate-300 border border-slate-700">
-            q0 - DESCONECTADO
+          <div class="flex items-center gap-2 flex-wrap">
+            <div id="brilloBadge" class="px-2.5 py-1 rounded-md text-xs font-semibold font-mono bg-amber-950/60 text-amber-300 border border-amber-500/30">
+              Brillo: q4 (Máximo - 100%)
+            </div>
+            <div id="statusBadge" class="px-2.5 py-1 rounded-md text-xs font-semibold font-mono bg-slate-800 text-slate-300 border border-slate-700">
+              q0 - DESCONECTADO
+            </div>
           </div>
         </div>
 
-        <!-- Cable de conexión física de la tira -->
-        <div class="relative my-auto py-6">
-          <div class="absolute top-1/2 left-0 w-full h-1.5 bg-slate-950 -translate-y-1/2 border-y border-slate-800 z-0"></div>
+        <!-- Cable de conexión física de la tira y focos -->
+        <div class="relative my-auto py-8">
+          <div class="absolute top-1/2 left-0 w-full h-2 bg-slate-950 -translate-y-1/2 border-y border-slate-800 z-0"></div>
           
-          <!-- Contenedor con flex/grid de los 12 LEDs -->
-          <div id="ledContainer" class="relative z-10 grid grid-cols-6 sm:grid-cols-12 gap-3 sm:gap-2 justify-items-center">
-            <!-- Los 12 leds se generan dinámicamente -->
+          <!-- Contenedor con flex/grid de los 5 LEDs -->
+          <div id="ledContainer" class="relative z-10 grid grid-cols-5 gap-3 sm:gap-6 justify-items-center transition-all duration-300">
+            <!-- Los 5 leds se generan dinámicamente -->
           </div>
         </div>
 
@@ -247,15 +252,37 @@
         </div>
       </div>
 
+      <!-- INSPECTOR DE PILA / AUTÓMATA DE PILA (PDA) -->
+      <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-4 sm:p-5">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-xs font-mono font-bold uppercase text-slate-300 flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-amber-400"></i> Memoria LIFO / Autómata de Pila (PDA)
+          </h3>
+          <div class="flex items-center gap-2">
+            <span id="pilaCountBadge" class="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">0 estados</span>
+            <button id="btnDeshacer" onclick="enviarComando('d')" class="bg-indigo-900/60 hover:bg-indigo-700/60 text-indigo-200 border border-indigo-500/40 px-3 py-1 rounded-lg font-mono text-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer opacity-50 cursor-not-allowed" title="Retroceder al estado anterior (d)">
+              <i class="fa-solid fa-rotate-left"></i>
+              <span class="font-bold">Deshacer (d)</span>
+            </button>
+          </div>
+        </div>
+        <p class="text-[11px] text-slate-400 font-mono mb-2">
+          Historial de estados apilados en transiciones de color válidas (LIFO). El elemento con <span class="text-amber-300 font-bold">🔝</span> es el tope de la pila.
+        </p>
+        <div id="pilaVisualContainer" class="bg-cyberDark border border-slate-800/80 rounded-xl p-2.5 flex flex-wrap items-center gap-1.5 min-h-[42px]">
+          <span class="text-slate-500 italic text-[11px] font-mono">Pila vacía (Sin historial previo)</span>
+        </div>
+      </div>
+
     </section>
 
-    <!-- SECCIÓN DERECHA: PANEL DE CONTROL Y LOG DE COMANDOS -->
+    <!-- SECCIÓN DERECHA: PANEL DE CONTROL, BRILLO Y LOG DE COMANDOS -->
     <section class="lg:col-span-5 flex flex-col gap-6">
       
-      <!-- PANEL DE BOTONES DEL ALFABETO -->
+      <!-- PANEL DE BOTONES DEL ALFABETO DE COLOR -->
       <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-4 sm:p-6 shadow-2xl">
         <h2 class="text-sm font-mono font-bold uppercase text-slate-300 mb-4 flex items-center justify-between">
-          <span><i class="fa-solid fa-gamepad text-teal-400 mr-2"></i>Teclado de Comandos ('Σ')</span>
+          <span><i class="fa-solid fa-gamepad text-teal-400 mr-2"></i>Teclado de Comandos (&Sigma;)</span>
           <span class="text-xs text-slate-500 lowercase font-normal">(o usá tu teclado físico)</span>
         </h2>
 
@@ -308,6 +335,51 @@
         </div>
       </div>
 
+      <!-- PANEL DE CONTROL DE BRILLO (MÁQUINA DE MOORE) -->
+      <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-4 sm:p-5 shadow-2xl">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-sm font-mono font-bold uppercase text-slate-300 flex items-center gap-2">
+            <i class="fa-solid fa-sun text-amber-400"></i>
+            <span>Control de Brillo (Moore)</span>
+          </h2>
+          <span class="text-xs font-mono text-slate-500">&Sigma;<sub>brillo</sub> = {1, 2, 3, 4, 5}</span>
+        </div>
+        <p class="text-[11px] text-slate-400 font-mono mb-3">
+          Ajusta la intensidad lumínica óptica de los LEDs sin alterar la pila de colores.
+        </p>
+        <div class="grid grid-cols-5 gap-1.5 sm:gap-2">
+          <button onclick="enviarComando('1')" data-nivel="q0" class="btn-brillo bg-amber-950/30 hover:bg-amber-900/50 text-amber-300/80 border border-amber-500/30 p-2 rounded-xl font-mono text-xs flex flex-col items-center gap-0.5 transition-all active:scale-95">
+            <span class="font-bold text-sm bg-amber-900/60 px-2 py-0.5 rounded text-amber-200">1</span>
+            <span class="text-[10px]">Bajo</span>
+            <span class="text-[9px] text-slate-400">20%</span>
+          </button>
+
+          <button onclick="enviarComando('2')" data-nivel="q1" class="btn-brillo bg-amber-950/30 hover:bg-amber-900/50 text-amber-300/80 border border-amber-500/30 p-2 rounded-xl font-mono text-xs flex flex-col items-center gap-0.5 transition-all active:scale-95">
+            <span class="font-bold text-sm bg-amber-900/60 px-2 py-0.5 rounded text-amber-200">2</span>
+            <span class="text-[10px]">Tenue</span>
+            <span class="text-[9px] text-slate-400">40%</span>
+          </button>
+
+          <button onclick="enviarComando('3')" data-nivel="q2" class="btn-brillo bg-amber-950/30 hover:bg-amber-900/50 text-amber-300/80 border border-amber-500/30 p-2 rounded-xl font-mono text-xs flex flex-col items-center gap-0.5 transition-all active:scale-95">
+            <span class="font-bold text-sm bg-amber-900/60 px-2 py-0.5 rounded text-amber-200">3</span>
+            <span class="text-[10px]">Medio</span>
+            <span class="text-[9px] text-slate-400">60%</span>
+          </button>
+
+          <button onclick="enviarComando('4')" data-nivel="q3" class="btn-brillo bg-amber-950/30 hover:bg-amber-900/50 text-amber-300/80 border border-amber-500/30 p-2 rounded-xl font-mono text-xs flex flex-col items-center gap-0.5 transition-all active:scale-95">
+            <span class="font-bold text-sm bg-amber-900/60 px-2 py-0.5 rounded text-amber-200">4</span>
+            <span class="text-[10px]">Alto</span>
+            <span class="text-[9px] text-slate-400">80%</span>
+          </button>
+
+          <button onclick="enviarComando('5')" data-nivel="q4" class="btn-brillo ring-2 ring-amber-400 bg-amber-900/70 text-amber-200 border border-amber-500/50 p-2 rounded-xl font-mono text-xs flex flex-col items-center gap-0.5 transition-all active:scale-95">
+            <span class="font-bold text-sm bg-amber-900/60 px-2 py-0.5 rounded text-amber-200">5</span>
+            <span class="text-[10px]">Máximo</span>
+            <span class="text-[9px] text-slate-400">100%</span>
+          </button>
+        </div>
+      </div>
+
       <!-- HISTORIAL DE EJECUCIÓN (CONSOLE LOG) -->
       <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-4 sm:p-5 flex-grow flex flex-col justify-between">
         <div class="flex justify-between items-center mb-2">
@@ -331,16 +403,16 @@
 
   <!-- PIE DE PÁGINA -->
   <footer class="max-w-6xl mx-auto w-full mt-6 text-center text-xs text-slate-600 font-mono py-2">
-    Implementación en JS de la arquitectura Máquina de Moore / DFA.
+    Implementación Web: Máquina de Moore (Color & Brillo) y Autómata con Pila LIFO.
   </footer>
 
   <!-- LÓGICA JAVASCRIPT DEL AUTÓMATA -->
   <script>
     // -------------------------------------------------------------
-    // 1. DEFINICIÓN DEL AUTÓMATA MOORE & DFA (Lógica exacta)
+    // 1. DEFINICIÓN DEL AUTÓMATA MOORE & DFA (Color e Iluminación)
     // -------------------------------------------------------------
 
-    // Tabla de transiciones del DFA
+    // Tabla de transiciones del DFA de color (Modelo/foco.py)
     const dfaTransitions = {
       'q0':  { 'e': 'q1' },
       'q1':  { 'a': 'q0', 'r': 'q2', 'v': 'q3', 'z': 'q4', 'p': 'q10', 'i': 'q5', 'g': 'q9' },
@@ -370,6 +442,28 @@
       'q10': { label: "⚙️ SELECTOR DE PATRÓN", styleClass: "led-pattern-selector" }
     };
 
+    // -------------------------------------------------------------
+    // 2. DEFINICIÓN DEL AUTÓMATA DE BRILLO (Modelo/brillo.py)
+    // -------------------------------------------------------------
+
+    // Transiciones de la Máquina de Moore de Brillo
+    const brilloTransitions = {
+      'q0': { '1': 'q0', '2': 'q1', '3': 'q2', '4': 'q3', '5': 'q4' },
+      'q1': { '1': 'q0', '2': 'q1', '3': 'q2', '4': 'q3', '5': 'q4' },
+      'q2': { '1': 'q0', '2': 'q1', '3': 'q2', '4': 'q3', '5': 'q4' },
+      'q3': { '1': 'q0', '2': 'q1', '3': 'q2', '4': 'q3', '5': 'q4' },
+      'q4': { '1': 'q0', '2': 'q1', '3': 'q2', '4': 'q3', '5': 'q4' }
+    };
+
+    // Salidas de Moore para el Brillo (Bajo, Tenue, Medio, Alto, Máximo)
+    const salidasBrillo = {
+      'q0': { label: 'Bajo', factor: 0.2, porcentaje: '20%' },
+      'q1': { label: 'Tenue', factor: 0.4, porcentaje: '40%' },
+      'q2': { label: 'Medio', factor: 0.6, porcentaje: '60%' },
+      'q3': { label: 'Alto', factor: 0.8, porcentaje: '80%' },
+      'q4': { label: 'Máximo', factor: 1.0, porcentaje: '100%' }
+    };
+
     // Nombre amigable para la leyenda del alfabeto
     const nombresAlfabeto = {
       'e': 'Encender (e)',
@@ -380,28 +474,56 @@
       'z': 'Azul (z)',
       'i': 'Intermitente (i)',
       'p': 'Selector Patrones (p)',
-      'g': 'RGB / Arcoíris (g)'
+      'g': 'RGB / Arcoíris (g)',
+      'd': 'Deshacer / Retroceder (d)',
+      '1': 'Brillo Bajo 20% (1)',
+      '2': 'Brillo Tenue 40% (2)',
+      '3': 'Brillo Medio 60% (3)',
+      '4': 'Brillo Alto 80% (4)',
+      '5': 'Brillo Máximo 100% (5)'
     };
 
-    // Estado actual de la Máquina de Moore (Inicia en q0)
+    // -------------------------------------------------------------
+    // 3. ESTADOS GLOBALES Y MEMORIA DE PILA
+    // -------------------------------------------------------------
+
+    // Estado actual del DFA de color (arranca en q0: Apagada)
     let estadoActual = 'q0';
-    const CANTIDAD_LEDS = 12;
+
+    // Estado actual de la Máquina de Brillo (arranca en q4: Máximo 100%)
+    let estadoBrilloActual = 'q4';
+
+    // Memoria LIFO del Autómata de Pila (Modelo/AutomataPila.py)
+    let pilaEstados = [];
+
+    // Cantidad uniforme de LEDs (5 focos en paridad con ControladorTiraLed.py)
+    const CANTIDAD_LEDS = 5;
 
     // -------------------------------------------------------------
-    // 2. FUNCIONES DE INTERFAZ Y RENDERIZADO
+    // 4. FUNCIONES DE INTERFAZ Y RENDERIZADO
     // -------------------------------------------------------------
 
-    // Inicializar los 12 elementos LED físicos en el DOM
+    // Inicializar los 5 elementos LED físicos en el DOM
     function inicializarTiraLeds() {
       const container = document.getElementById('ledContainer');
       container.innerHTML = '';
 
       for (let i = 0; i < CANTIDAD_LEDS; i++) {
+        const ledWrapper = document.createElement('div');
+        ledWrapper.className = 'flex flex-col items-center gap-2';
+
         const led = document.createElement('div');
         led.id = `led-${i}`;
-        led.className = `led-bulb w-7 h-7 sm:w-9 sm:h-9 rounded-full cursor-pointer border border-slate-700/50 led-off`;
+        led.className = `led-bulb w-12 h-12 sm:w-16 sm:h-16 rounded-full cursor-pointer border-2 border-slate-700/60 led-off shadow-lg`;
         led.title = `LED #${i+1}`;
-        container.appendChild(led);
+
+        const label = document.createElement('span');
+        label.className = 'text-[10px] sm:text-xs font-mono text-slate-500 font-semibold';
+        label.textContent = `#${i+1}`;
+
+        ledWrapper.appendChild(led);
+        ledWrapper.appendChild(label);
+        container.appendChild(ledWrapper);
       }
     }
 
@@ -414,14 +536,14 @@
         const led = document.getElementById(`led-${i}`);
         if (!led) continue;
 
-        // Limpiamos clases anteriores de visualización
-        led.className = `led-bulb w-7 h-7 sm:w-9 sm:h-9 rounded-full cursor-pointer transition-all duration-300 ${styleClass}`;
+        // Limpiamos clases anteriores de visualización preservando dimensiones
+        led.className = `led-bulb w-12 h-12 sm:w-16 sm:h-16 rounded-full cursor-pointer border-2 border-slate-700/60 transition-all duration-300 ${styleClass}`;
 
         // En caso de modo RGB, desfasamos ligeramente la animación para efecto marquesina
         if (estadoActual === 'q9') {
-          led.style.animationDelay = `${i * 0.15}s`;
+          led.style.animationDelay = `${i * 0.2}s`;
         } else if (estadoActual === 'q10') {
-          led.style.animationDelay = `${(i % 3) * 0.2}s`;
+          led.style.animationDelay = `${(i % 3) * 0.25}s`;
         } else {
           led.style.animationDelay = '0s';
         }
@@ -434,6 +556,77 @@
 
       // Renderizar los caminos/transiciones posibles desde aquí
       actualizarTransicionesPosibles();
+    }
+
+    // Actualizar visualización del brillo óptico y botones
+    function actualizarVisualizacionBrillo() {
+      const infoBrillo = salidasBrillo[estadoBrilloActual];
+      const container = document.getElementById('ledContainer');
+      if (container) {
+        container.style.filter = `brightness(${infoBrillo.factor})`;
+      }
+
+      // Actualizar badge en la barra superior
+      const badgeBrillo = document.getElementById('brilloBadge');
+      if (badgeBrillo) {
+        badgeBrillo.textContent = `Brillo: ${estadoBrilloActual} (${infoBrillo.label} - ${infoBrillo.porcentaje})`;
+      }
+
+      // Resaltar el botón activo del nivel de brillo
+      document.querySelectorAll('.btn-brillo').forEach(btn => {
+        const nivel = btn.getAttribute('data-nivel');
+        if (nivel === estadoBrilloActual) {
+          btn.className = 'btn-brillo ring-2 ring-amber-400 bg-amber-900/70 text-amber-200 border border-amber-500/50 p-2 rounded-xl font-mono text-xs flex flex-col items-center gap-0.5 transition-all active:scale-95';
+        } else {
+          btn.className = 'btn-brillo bg-amber-950/30 hover:bg-amber-900/50 text-amber-300/80 border border-amber-500/30 p-2 rounded-xl font-mono text-xs flex flex-col items-center gap-0.5 transition-all active:scale-95';
+        }
+      });
+    }
+
+    // Actualizar bandeja visual interactiva de la pila LIFO
+    function actualizarVisualizacionPila() {
+      const container = document.getElementById('pilaVisualContainer');
+      const badgeCount = document.getElementById('pilaCountBadge');
+      const btnDeshacer = document.getElementById('btnDeshacer');
+
+      if (badgeCount) {
+        badgeCount.textContent = `${pilaEstados.length} ${pilaEstados.length === 1 ? 'estado' : 'estados'}`;
+      }
+
+      if (btnDeshacer) {
+        if (pilaEstados.length === 0) {
+          btnDeshacer.classList.add('opacity-50', 'cursor-not-allowed');
+          btnDeshacer.disabled = true;
+        } else {
+          btnDeshacer.classList.remove('opacity-50', 'cursor-not-allowed');
+          btnDeshacer.disabled = false;
+        }
+      }
+
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (pilaEstados.length === 0) {
+        container.innerHTML = `<span class="text-slate-500 italic text-[11px] font-mono">Pila vacía (Sin historial previo)</span>`;
+        return;
+      }
+
+      // Mostrar elementos en orden (base a tope)
+      pilaEstados.forEach((st, idx) => {
+        const chip = document.createElement('span');
+        const esTope = idx === pilaEstados.length - 1;
+        chip.className = `px-2 py-0.5 rounded font-mono text-xs flex items-center gap-1 ${
+          esTope
+            ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 font-bold ring-1 ring-amber-400/30 animate-pulse'
+            : 'bg-slate-800 text-slate-300 border border-slate-700'
+        }`;
+        const salidaNom = salidasMoore[st] ? salidasMoore[st].label.split(' ')[1] || st : st;
+        chip.innerHTML = esTope 
+          ? `<span>🔝</span> <span class="font-bold">${st}</span> <span class="text-[10px] text-amber-400/80">(${salidaNom})</span>`
+          : `<span>${st}</span> <span class="text-[10px] text-slate-400">(${salidaNom})</span>`;
+        chip.title = `Nivel ${idx + 1} de ${pilaEstados.length}`;
+        container.appendChild(chip);
+      });
     }
 
     // Muestra las opciones a las que se puede avanzar desde el estado actual
@@ -459,28 +652,67 @@
       });
     }
 
-    // Procesa la entrada de un comando según la Máquina de Moore
-    function enviarComando(simbolo) {
-      const transicionesDisponibles = dfaTransitions[estadoActual] || {};
+    // -------------------------------------------------------------
+    // 5. ENRUTAMIENTO Y DESPACHO DE COMANDOS
+    // -------------------------------------------------------------
 
-      if (simbolo in transicionesDisponibles) {
+    // Procesa la entrada de un comando (color, brillo o deshacer)
+    function enviarComando(simbolo) {
+      const comandosBrillo = ['1', '2', '3', '4', '5'];
+
+      if (comandosBrillo.includes(simbolo)) {
+        // Transición de la Máquina de Moore de Brillo (ortogonal a la pila de color)
+        const estadoBrilloAnt = estadoBrilloActual;
+        estadoBrilloActual = brilloTransitions[estadoBrilloActual][simbolo];
+        const infoBrillo = salidasBrillo[estadoBrilloActual];
+
+        actualizarVisualizacionBrillo();
+
+        agregarLog(
+          `🔆 Brillo ajustado: [${estadoBrilloAnt}] --'${simbolo}'--> [${estadoBrilloActual}] (${infoBrillo.label} / ${infoBrillo.porcentaje})`,
+          'exito'
+        );
+      } else if (simbolo === 'd') {
+        // Autómata de Pila: operación retroceder (pop)
+        if (pilaEstados.length > 0) {
+          const estadoOrigen = estadoActual;
+          const estadoPrevio = pilaEstados.pop();
+          estadoActual = estadoPrevio;
+          const infoSalida = salidasMoore[estadoActual].label;
+
+          actualizarVisualizacionLeds();
+          actualizarVisualizacionPila();
+
+          agregarLog(
+            `↩️ Deshacer: Volviste de [${estadoOrigen}] a [${estadoActual}] (${infoSalida}). Pila restante: ${pilaEstados.length}`,
+            'info'
+          );
+        } else {
+          agregarLog(
+            `⚠️ Pila vacía: Sin historial para deshacer. Se mantiene: ${salidasMoore[estadoActual].label}`,
+            'error'
+          );
+        }
+      } else if (dfaTransitions[estadoActual] && simbolo in dfaTransitions[estadoActual]) {
+        // Transición válida de color: apilar estado actual (comportamiento de AutomataPila)
+        pilaEstados.push(estadoActual);
+
         const estadoAnterior = estadoActual;
-        estadoActual = transicionesDisponibles[simbolo];
+        estadoActual = dfaTransitions[estadoActual][simbolo];
         const nuevaSalida = salidasMoore[estadoActual].label;
 
-        // Actualizar interfaz
         actualizarVisualizacionLeds();
+        actualizarVisualizacionPila();
 
-        // Registrar éxito en consola
         agregarLog(
-          ` Transición: [${estadoAnterior}] --'${simbolo}'--> [${estadoActual}] (${nuevaSalida})`,
+          `🎯 Transición: [${estadoAnterior}] --'${simbolo}'--> [${estadoActual}] (${nuevaSalida}). [Apilado ${estadoAnterior}]`,
           'exito'
         );
       } else {
-        // Comando rechazado: permanece en el mismo estado
+        // Comando rechazado: permanece en el mismo estado sin modificar la pila
         const estadoFisico = salidasMoore[estadoActual].label;
         agregarLog(
-          ` ❌ Comando '${simbolo}' ignorado en ${estadoActual}. Se mantiene: ${estadoFisico}`,
+          `❌ Comando '${simbolo}' ignorado en [${estadoActual}]. Se mantiene: ${estadoFisico}`,
           'error'
         );
       }
@@ -489,8 +721,9 @@
     // Agregar mensajes con formato al log del historial
     function agregarLog(mensaje, tipo = 'info') {
       const consoleBox = document.getElementById('logConsole');
+      if (!consoleBox) return;
+
       const item = document.createElement('div');
-      
       const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       
       if (tipo === 'exito') {
@@ -510,12 +743,13 @@
 
     function limpiarLog() {
       const consoleBox = document.getElementById('logConsole');
+      if (!consoleBox) return;
       consoleBox.innerHTML = '';
       agregarLog('Historial limpiado. Sistema listo.', 'info');
     }
 
     // -------------------------------------------------------------
-    // 3. LISTENERS DE TECLADO FÍSICO Y CARGA INICIAL
+    // 6. LISTENERS DE TECLADO FÍSICO Y CARGA INICIAL
     // -------------------------------------------------------------
 
     document.addEventListener('keydown', (e) => {
@@ -523,7 +757,7 @@
       if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
 
       const tecla = e.key.toLowerCase();
-      const simbolosValidos = ['e', 'a', 'b', 'r', 'v', 'z', 'i', 'p', 'g'];
+      const simbolosValidos = ['e', 'a', 'b', 'r', 'v', 'z', 'i', 'p', 'g', 'd', '1', '2', '3', '4', '5'];
 
       if (simbolosValidos.includes(tecla)) {
         enviarComando(tecla);
@@ -533,8 +767,12 @@
     window.onload = function() {
       inicializarTiraLeds();
       actualizarVisualizacionLeds();
-      agregarLog('--- Sistema de Iluminación Moore Iniciado ---', 'info');
-      agregarLog('Estado inicial: q0 (🔌 APAGADA)', 'info');
+      actualizarVisualizacionBrillo();
+      actualizarVisualizacionPila();
+      agregarLog('--- Sistema de Iluminación Moore & PDA Iniciado ---', 'info');
+      agregarLog('Estado inicial de color: q0 (🔌 APAGADA)', 'info');
+      agregarLog('Estado inicial de brillo: q4 (Máximo - 100%)', 'info');
+      agregarLog('Pila de estados: Inicializada vacía (0 elementos)', 'info');
     };
   </script>
 </body>

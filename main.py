@@ -4,6 +4,8 @@ from Controlador.controlador_tira_led import ControladorTiraLed
 
 def main():
     root = tk.Tk()
+    root.geometry("760x560")
+    root.minsize(640, 420)
     vista = VistaTiraLed(root)
     controlador = ControladorTiraLed(vista)
     controlador.iniciar()

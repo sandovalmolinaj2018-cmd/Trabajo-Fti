@@ -2,7 +2,7 @@ from automata.fa.dfa import DFA
 from Modelo.AutomataPila import AutomataDePila
 
 class Foco(AutomataDePila):
-    def __init__(self):
+    def __init__(self, verbose=True):
         luces_nfa = DFA(
             states={'q0','q1','q2','q3','q4','q5','q6','q7','q8','q9','q10'},
             input_symbols={'e','a','b','r','v','z','p','i','g'},
@@ -49,7 +49,7 @@ class Foco(AutomataDePila):
                 'q10': "Menu Patrones",
         }
 
-        super().__init__(luces_nfa,traducido)
+        super().__init__(luces_nfa, traducido, verbose=verbose)
 
     def posibles_caminos(self):
         caminos = []

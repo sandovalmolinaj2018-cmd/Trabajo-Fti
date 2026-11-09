@@ -10,7 +10,7 @@ class ControladorTiraLed:
         self.cantidad_focos = 5
         self.tira_focos = []
         for i in range(self.cantidad_focos):
-            self.tira_focos.append(Foco())
+            self.tira_focos.append(Foco(verbose=(i == 0)))
 
         self.control_brillo = Brillo()
 
@@ -51,18 +51,19 @@ class ControladorTiraLed:
 
         if comando in numeros_brillo:
             self.control_brillo.procesar_entrada(comando)
-            print(f"Brillo ajustado a: {self.control_brillo.obtener_estado_actual()}")
 
         elif comando == 'd':
             for foco in self.tira_focos:
                 foco.retroceder()
-            print(f"Deshacer: color actual {self.tira_focos[0].obtener_estado_actual()}")
 
         else:
+            transicion_valida = False
             for foco in self.tira_focos:
-                foco.procesar_entrada(comando)
-            self.fase = 0  # el parpadeo / RGB arranca siempre desde el principio
-            print(f"Color cambiado a: {self.tira_focos[0].obtener_estado_actual()}")
+                res = foco.procesar_entrada(comando)
+                if res is not None:
+                    transicion_valida = True
+            if transicion_valida:
+                self.fase = 0  # el parpadeo / RGB arranca siempre desde el principio
 
         self.actualizar_pantalla()
 
