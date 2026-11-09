@@ -17,13 +17,12 @@ class Brillo(MaquinaDeMoore):
             final_states={'q0', 'q1', 'q2', 'q3', 'q4'}    
         )
 
-        salidas_brillo ={
-            'q0': "Bajo",
-            'q1':"Tenue",
-            'q2':"Medio",
-            'q3':"Alto",
-            'q4':"Maximo"
-
+        salidas_brillo = {
+            'q0': "Muy Bajo",
+            'q1': "Bajo",
+            'q2': "Medio",
+            'q3': "Alto",
+            'q4': "Maximo"
         }
 
-        super().__init__(automata_brillo,salidas_brillo)
+        super().__init__(automata_brillo, salidas_brillo)

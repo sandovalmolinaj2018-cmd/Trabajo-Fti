@@ -1,11 +1,8 @@
 from Modelo.foco import Foco
 from Modelo.brillo import Brillo
 
-class ControladorTiraLed:
-    def __init__(self, vista):
-        self.vista = vista
-        self.vista.set_controlador(self)
-
+class ControladorTiraLedCss:
+    def __init__(self):
         # Creacion tira led
         self.cantidad_focos = 5
         self.tira_focos = []
@@ -19,8 +16,11 @@ class ControladorTiraLed:
         self.intervalo_ms = 500
         self.secuencia_rgb = ["red", "green", "blue"]
 
-        # Traduccion entre el modelo y la vista
-        # (los intermitentes guardan su color "base", el parpadeo se resuelve al pintar)
+        # Variables para almacenar el último estado y entregárselo a la web
+        self.colores_ultimos = ["black"] * self.cantidad_focos
+        self.brillo_actual = "Maximo"
+
+        # Traduccion entre el modelo y la vista web
         self.colores_tk = {
             "Apagado": "black",
             "Blanco": "white",
@@ -34,17 +34,6 @@ class ControladorTiraLed:
             "Patron RGB": "magenta",   # no se usa, el RGB se calcula con la fase
             "Menu Patrones": "yellow"
         }
-
-    def iniciar(self):
-        self.vista.dibujar_tira(self.cantidad_focos)
-        self.actualizar_pantalla()
-        self.vista.programar(self.intervalo_ms, self.animar)
-
-    def animar(self):
-        # Se llama sola cada intervalo_ms
-        self.fase += 1
-        self.actualizar_pantalla()
-        self.vista.programar(self.intervalo_ms, self.animar)
 
     def procesar_comando(self, comando):
         numeros_brillo = ['1', '2', '3', '4', '5']
@@ -67,6 +56,11 @@ class ControladorTiraLed:
 
         self.actualizar_pantalla()
 
+    def avanzar_animacion(self):
+        # Llamado periódicamente por el hilo en segundo plano para las animaciones
+        self.fase += 1
+        self.actualizar_pantalla()
+
     def actualizar_pantalla(self):
         colores_para_pintar = []
 
@@ -85,5 +79,5 @@ class ControladorTiraLed:
 
             colores_para_pintar.append(color_foco)
 
-        estado_brillo = self.control_brillo.obtener_estado_actual()
-        self.vista.actualizar_luces(colores_para_pintar, estado_brillo)
+        self.brillo_actual = self.control_brillo.obtener_estado_actual()
+        self.colores_ultimos = colores_para_pintar

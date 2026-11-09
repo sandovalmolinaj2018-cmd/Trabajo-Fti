@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulador Tira LED - MVC Web</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 { margin-bottom: 5px; }
+        .sub { color: #888; font-size: 0.9rem; margin-bottom: 20px; }
+        
+        .tira-contenedor {
+            display: flex;
+            gap: 20px;
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            margin-bottom: 15px;
+        }
+        .foco {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: black;
+            border: 2px solid #444;
+            transition: background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+        }
+        /* Efecto luminoso de neón */
+        .encendido {
+            box-shadow: 0 0 25px var(--color-foco, white), inset 0 0 12px rgba(255,255,255,0.7);
+        }
+        
+        .estado-brillo {
+            font-weight: bold;
+            color: #fbbf24;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .panel-controles {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .fila {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            background-color: #333;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        button:hover { background-color: #555; }
+        button:active { transform: scale(0.96); }
+
+        .btn-rojo { background-color: #dc2626; }
+        .btn-rojo:hover { background-color: #ef4444; }
+
+        .btn-verde { background-color: #16a34a; }
+        .btn-verde:hover { background-color: #22c55e; }
+
+        .btn-azul { background-color: #2563eb; }
+        .btn-azul:hover { background-color: #3b82f6; }
+
+        .btn-deshacer { background-color: #9a3412; width: 100%; }
+        .btn-deshacer:hover { background-color: #c2410c; }
+    </style>
+</head>
+<body>
+
+    <h1>Simulador de Tira LED</h1>
+    <div class="sub">Modelo en Python (Autómatas / Moore) + Vista Web HTML/CSS</div>
+
+    <!-- Tira de LEDs -->
+    <div class="tira-contenedor">
+        <div class="foco" id="foco-0"></div>
+        <div class="foco" id="foco-1"></div>
+        <div class="foco" id="foco-2"></div>
+        <div class="foco" id="foco-3"></div>
+        <div class="foco" id="foco-4"></div>
+    </div>
+
+    <div class="estado-brillo" id="estado-brillo">Brillo: Máximo</div>
+
+    <!-- Panel de Botones -->
+    <div class="panel-controles">
+        <div class="fila">
+            <button onclick="enviarComando('e')">Encender (e)</button>
+            <button onclick="enviarComando('a')">Apagar (a)</button>
+            <button onclick="enviarComando('b')">Blanco (b)</button>
+        </div>
+        <div class="fila">
+            <button class="btn-rojo" onclick="enviarComando('r')">Rojo (r)</button>
+            <button class="btn-verde" onclick="enviarComando('v')">Verde (v)</button>
+            <button class="btn-azul" onclick="enviarComando('z')">Azul (z)</button>
+        </div>
+        <div class="fila">
+            <button onclick="enviarComando('i')">Intermitente (i)</button>
+            <button onclick="enviarComando('p')">Patrones (p)</button>
+            <button onclick="enviarComando('g')">RGB (g)</button>
+        </div>
+        <hr style="border: 0; border-top: 1px solid #444; width: 100%; margin: 5px 0;">
+        <div class="fila">
+            <button onclick="enviarComando('1')">1: Muy Bajo</button>
+            <button onclick="enviarComando('2')">2: Bajo</button>
+            <button onclick="enviarComando('3')">3: Medio</button>
+            <button onclick="enviarComando('4')">4: Alto</button>
+            <button onclick="enviarComando('5')">5: Máx</button>
+        </div>
+        <div class="fila">
+            <button class="btn-deshacer" onclick="enviarComando('d')">↶ Deshacer (d)</button>
+        </div>
+    </div>
+
+    <script>
+        // Niveles de opacidad según el autómata de brillo
+        const opacidadesBrillo = {
+            "Muy Bajo": 0.20,
+            "Bajo": 0.40,
+            "Medio": 0.65,
+            "Alto": 0.85,
+            "Maximo": 1.0
+        };
+
+        function enviarComando(cmd) {
+            fetch('/api/comando', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ comando: cmd })
+            }).catch(err => console.error("Error al enviar comando:", err));
+        }
+
+        // Consultar el estado a Python constantemente para animaciones y brillo fluidos
+        function refrescarEstado() {
+            fetch('/api/estado')
+                .then(res => res.json())
+                .then(data => {
+                    // Actualizar texto del brillo
+                    document.getElementById('estado-brillo').innerText = "Brillo: " + data.brillo;
+                    
+                    let opacidad = opacidadesBrillo[data.brillo] ?? 1.0;
+
+                    // Actualizar colores y opacidad de los focos
+                    data.colores.forEach((colorName, index) => {
+                        const foco = document.getElementById(`foco-${index}`);
+                        if (!foco) return;
+
+                        foco.style.backgroundColor = colorName;
+                        foco.style.opacity = opacidad;
+
+                        if (colorName !== "black" && colorName !== "#000000") {
+                            foco.classList.add('encendido');
+                            foco.style.setProperty('--color-foco', colorName);
+                        } else {
+                            foco.classList.remove('encendido');
+                        }
+                    });
+                })
+                .catch(err => console.error("Error al refrescar estado:", err));
+        }
+
+        // Refrescar cada 100ms para que las animaciones (intermitente/RGB) corran fluidas
+        setInterval(refrescarEstado, 100);
+    </script>
+</body>
+</html>
