@@ -9,8 +9,7 @@ class VistaTiraLed:
         self.root.minsize(640, 420)
         self.root.configure(bg="#222222")
 
-        # Contenedor desplazable (Canvas + Scrollbar vertical) para garantizar
-        # que todos los controles permanezcan visibles y accesibles en cualquier resolución.
+
         self.main_canvas = tk.Canvas(self.root, bg="#222222", highlightthickness=0)
         self.scrollbar = tk.Scrollbar(self.root, orient="vertical", command=self.main_canvas.yview)
         self.main_canvas.configure(yscrollcommand=self.scrollbar.set)
@@ -20,42 +19,42 @@ class VistaTiraLed:
             (0, 0), window=self.scrollable_frame, anchor="nw"
         )
 
-        # Enlace de eventos dinámicos para adaptación de scroll
-        self.scrollable_frame.bind("<Configure>", self._on_frame_configure)
-        self.main_canvas.bind("<Configure>", self._on_canvas_configure)
 
-        # Enlace de eventos de scroll con rueda de ratón (multiplataforma)
-        self.main_canvas.bind("<MouseWheel>", self._on_mousewheel)
-        self.main_canvas.bind("<Button-4>", self._on_mousewheel)
-        self.main_canvas.bind("<Button-5>", self._on_mousewheel)
-        self.root.bind_all("<MouseWheel>", self._on_mousewheel)
-        self.root.bind_all("<Button-4>", self._on_mousewheel)
-        self.root.bind_all("<Button-5>", self._on_mousewheel)
+        self.scrollable_frame.bind("<Configure>", self.ajustar_scroll)
+        self.main_canvas.bind("<Configure>", self.ajustar_ancho)
+
+
+        self.main_canvas.bind("<MouseWheel>", self.mover_scroll)
+        self.main_canvas.bind("<Button-4>", self.mover_scroll)
+        self.main_canvas.bind("<Button-5>", self.mover_scroll)
+        self.root.bind_all("<MouseWheel>", self.mover_scroll)
+        self.root.bind_all("<Button-4>", self.mover_scroll)
+        self.root.bind_all("<Button-5>", self.mover_scroll)
 
         self.scrollbar.pack(side="right", fill="y")
         self.main_canvas.pack(side="left", fill="both", expand=True)
 
-        # 1. ZONA SUPERIOR: Contenedor para los círculos de la tira LED (padding reducido a 14)
+        # Focos
         self.frame_focos = tk.Frame(self.scrollable_frame, bg="#222222")
         self.frame_focos.pack(pady=14)
-        self.focos_canvas = []  # Círculos dibujados
+        self.focos_canvas = []
 
-        # 2. ZONA DE CONTROLES: Agrupación ergonómica
+        # Botones
         self.botones = {}
         self.botones_colores = []
         self.botones_brillo = []
         self.boton_deshacer = None
-        self._crear_botones()
+        self.crear_botones()
 
-    def _on_frame_configure(self, event=None):
+    def ajustar_scroll(self, event=None):
         self.main_canvas.configure(scrollregion=self.main_canvas.bbox("all"))
 
-    def _on_canvas_configure(self, event):
+    def ajustar_ancho(self, event):
         req_w = self.scrollable_frame.winfo_reqwidth()
         new_w = max(event.width, req_w)
         self.main_canvas.itemconfig(self.canvas_window, width=new_w)
 
-    def _on_mousewheel(self, event):
+    def mover_scroll(self, event):
         if event.num == 4:
             self.main_canvas.yview_scroll(-1, "units")
         elif event.num == 5:
@@ -63,15 +62,14 @@ class VistaTiraLed:
         elif hasattr(event, "delta") and event.delta:
             self.main_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
-    def set_controlador(self, controlador):
+    def poner_controlador(self, controlador):
         self.controlador = controlador
 
     def programar(self, ms, callback):
-        # Le permite al controlador pedir "llamame de nuevo en X ms"
         self.root.after(ms, callback)
 
-    def _crear_botones(self):
-        # Panel Controles de Color y Modos: agrupado en 3 filas equilibradas (<= 550px reqwidth)
+    def crear_botones(self):
+        # panel de colores y modos
         self.frame_colores = tk.LabelFrame(
             self.scrollable_frame,
             text=" Controles de Color y Modos ",
@@ -84,7 +82,7 @@ class VistaTiraLed:
         )
         self.frame_colores.pack(pady=4, padx=6, fill="x")
 
-        # Fila 1 (Encender, Apagar, Blanco): 3 botones
+        # fila 1: encender, apagar, blanco
         self.frame_colores_r1 = tk.Frame(self.frame_colores, bg="#222222")
         self.frame_colores_r1.pack(pady=2)
 
@@ -105,13 +103,13 @@ class VistaTiraLed:
                 width=width,
                 relief="raised",
                 cursor="hand2",
-                command=lambda c=comando: self.enviar_comando(c)
+                command=lambda c=comando: self.mandar_comando(c)
             )
             btn.pack(side="left", padx=2)
             self.botones[comando] = btn
             self.botones_colores.append(btn)
 
-        # Fila 2 (Rojo, Verde, Azul): 3 botones
+        # fila 2: rojo, verde, azul
         self.frame_colores_r2 = tk.Frame(self.frame_colores, bg="#222222")
         self.frame_colores_r2.pack(pady=2)
 
@@ -132,13 +130,13 @@ class VistaTiraLed:
                 width=width,
                 relief="raised",
                 cursor="hand2",
-                command=lambda c=comando: self.enviar_comando(c)
+                command=lambda c=comando: self.mandar_comando(c)
             )
             btn.pack(side="left", padx=2)
             self.botones[comando] = btn
             self.botones_colores.append(btn)
 
-        # Fila 3 (Animaciones y Patrones): Intermitente (i), Patrones (p), RGB / Arcoíris (g)
+        # fila 3: intermitente, patrones, RGB
         self.frame_colores_r3 = tk.Frame(self.frame_colores, bg="#222222")
         self.frame_colores_r3.pack(pady=2)
 
@@ -159,13 +157,13 @@ class VistaTiraLed:
                 width=width,
                 relief="raised",
                 cursor="hand2",
-                command=lambda c=comando: self.enviar_comando(c)
+                command=lambda c=comando: self.mandar_comando(c)
             )
             btn.pack(side="left", padx=2)
             self.botones[comando] = btn
             self.botones_colores.append(btn)
 
-        # Panel Nivel de Brillo e Historial: 2 filas compactas
+        # panel de brillo y deshacer
         self.frame_brillo = tk.LabelFrame(
             self.scrollable_frame,
             text=" Nivel de Brillo e Historial ",
@@ -178,7 +176,7 @@ class VistaTiraLed:
         )
         self.frame_brillo.pack(pady=4, padx=6, fill="x")
 
-        # Fila 1: 5 niveles de brillo (1 a 5)
+        # botones de brillo
         self.frame_brillo_fila = tk.Frame(self.frame_brillo, bg="#222222")
         self.frame_brillo_fila.pack(pady=2)
 
@@ -201,13 +199,13 @@ class VistaTiraLed:
                 width=8,
                 relief="raised",
                 cursor="hand2",
-                command=lambda c=comando: self.enviar_comando(c)
+                command=lambda c=comando: self.mandar_comando(c)
             )
             btn.pack(side="left", padx=2)
             self.botones[comando] = btn
             self.botones_brillo.append(btn)
 
-        # Fila 2: Botón de historial (autómata de pila): Deshacer (d) destacado
+        # botón deshacer
         self.frame_historial = tk.Frame(self.frame_brillo, bg="#222222")
         self.frame_historial.pack(pady=2)
 
@@ -221,31 +219,32 @@ class VistaTiraLed:
             width=18,
             relief="raised",
             cursor="hand2",
-            command=lambda: self.enviar_comando('d')
+            command=lambda: self.mandar_comando('d')
         )
         self.boton_deshacer.pack(side="left", padx=2)
         self.botones['d'] = self.boton_deshacer
 
-    def enviar_comando(self, comando):
-        # Le avisa al controlador qué botón se apretó
+    def mandar_comando(self, comando):
+        # le pasa al controlador el botón apretado
         if self.controlador:
-            self.controlador.procesar_comando(comando)
+            self.controlador.recibir_comando(comando)
 
-    def dibujar_tira(self, cantidad):
+    def dibujar_focos(self, cantidad):
         for _ in range(cantidad):
             c = tk.Canvas(self.frame_focos, width=60, height=60, bg="#222222", highlightthickness=0)
             c.pack(side="left", padx=5)
             
-            # foco de color
+            # Foco
             foco = c.create_oval(5, 5, 55, 55, fill="black", outline="gray", width=2)
             
-            # Sombra foco
+            # sombra
             sombra = c.create_oval(5, 5, 55, 55, fill="", outline="")
             
             self.focos_canvas.append((c, foco, sombra))
 
-    def actualizar_luces(self, colores_tira, estado_brillo):
-        # Factor de intensidad según el estado del autómata de brillo
+    def pintar_focos(self, colores_tira, estado_brillo):
+
+        # cuánto se atenúa el color según el brillo
         factores = {
             "Bajo": 0.2,
             "Tenue": 0.4,
@@ -258,8 +257,6 @@ class VistaTiraLed:
         for i in range(len(self.focos_canvas)):
             canvas, foco, sombra = self.focos_canvas[i]
 
-            # winfo_rgb convierte cualquier color de Tk ("red", "#ff0000", etc.)
-            # a valores de 0 a 65535, por eso se divide por 256
             r, g, b = self.root.winfo_rgb(colores_tira[i])
             r = int(r / 256 * factor)
             g = int(g / 256 * factor)
