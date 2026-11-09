@@ -1,96 +1,126 @@
-# Trabajo Práctico: Control de Iluminación Inteligente con Autómatas (FTI)
+## Trabajo Práctico: Control de Iluminación Inteligente con Autómatas (FTI)
 
-Proyecto desarrollado para la materia **Fundamentos Teóricos de Informática (FTI)**. Consiste en la implementación de un **Autómata Finito No Determinístico (AFND)** en Python utilizando la librería `automata-lib` para modelar y controlar el sistema de iluminación inteligente de un hogar.
+# Control de Iluminación Inteligente con Autómatas (FTI)
 
----
+Proyecto desarrollado para la cátedra **Fundamentos Teóricos de Informática (FTI)**. 
 
-## 👥 Integrantes
-
-* Lucas Ruiz
-* Jordan Sandoval Molina
-* Matias Segurado
+El sistema modela y simula el funcionamiento de una tira de luces LED inteligente mediante la teoría de autómatas, implementando un **Autómata Finito Determinístico (AFD)** y una **Máquina de Moore** (donde las salidas visuales dependen exclusivamente del estado actual del sistema).
+FALTA LA PARTE DE PILA.
 
 ---
 
-## 💡 Descripción del Problema
+## Integrantes
 
-El objetivo de este proyecto es simular mediante autómatas el funcionamiento de una aplicación móvil de control de iluminación LED hogareña. El usuario puede interactuar con el sistema mediante comandos para:
-* Encender y apagar las luces.
-* Cambiar entre diferentes colores estáticos (Blanco, Rojo, Verde, Azul).
-* Activar modos intermitentes para cada color.
-* Seleccionar patrones dinámicos de iluminación (como el modo RGB / Arcoíris).
+* **Lucas Ruiz**
+* **Jordan Sandoval Molina**
+* **Matias Segurado**
 
 ---
 
-## 🛠️ Requisitos e Instalación
+## Novedades y Actualizaciones Recientes
 
-Este proyecto utiliza la librería [automata-lib](https://caleb531.github.io/automata/) para la definición, validación y representación gráfica de autómatas en Python.
+* **Modelado como Máquina de Moore:** Cada estado tiene asociada una salida visual unívoca (color, intermitencia, modo dinámico RGB o apagado).
+* **Nueva Interfaz Gráfica de Escritorio (Tkinter):** Permite interactuar con la tira LED en tiempo real mediante botones y observar las transiciones de estado en vivo (`interfaz_luces.py`).
+* **Simulador Web Interactivo:** Prototipo visual en navegador (`simulador_tira_led_moore.html`) con efectos de iluminación CSS/Canvas.
+* **Soporte y Diagramación:** Definición formal en Python con `automata-lib`, diagrama visual exportado (`diagrama.png`) y archivo de modelado para JFLAP (`automata_Proyecto_Grupo8.jff`).
 
-### 1. Clonar el repositorio o descargar los archivos
-Asegúrate de tener el archivo `luces.py` en tu directorio de trabajo.
+---
 
-### 2. Instalar la librería principal
-Instala la biblioteca base mediante `pip`:
+## Descripción del Sistema
+
+El sistema simula el funcionamiento de una tira LED inteligente hogareña controlada por eventos/comandos:
+
+* **Encendido y Apagado:** Control general de energía.
+* **Colores estáticos:** Blanco, Rojo, Verde y Azul.
+* **Modos Intermitentes:** Parpadeo individual para cada uno de los colores.
+* **Modo Dinámico:** Efecto arcoíris / gradiente continuo (RGB).
+* **Parada / Pausa (`p`):** Regreso o cambio de flujo entre modos.
+* **Falta Pila**
+---
+
+## Especificación Formal de la Máquina
+
+### 1. Conjunto de Estados ($Q$)
+* **`q0`**: Apagado (OFF)
+* **`q1`**: Blanco estático
+* **`q2`**: Rojo estático
+* **`q3`**: Verde estático
+* **`q4`**: Azul estático
+* **`q5`**: Blanco intermitente
+* **`q6`**: Rojo intermitente
+* **`q7`**: Verde intermitente
+* **`q8`**: Azul intermitente
+* **`q9`**: Modo RGB Dinámico (Arcoíris)
+* **`q10`**: Estado de transición / Pausa
+
+### 2. Alfabeto de Entrada ($\Sigma$)
+* `e`: Encender
+* `a`: Apagar
+* `b`: Blanco
+* `r`: Rojo
+* `v`: Verde
+* `z`: Azul
+* `i`: Modo Intermitente
+* `g`: Modo RGB / Arcoíris
+* `p`: Parar / Cambiar modo
+
+### 3. Salidas de la Máquina de Moore ($\Delta$)
+Cada estado genera un comportamiento visual en la tira LED:
+* `q0` $\rightarrow$ Luz apagada
+* `q1` a `q4` $\rightarrow$ Color fijo correspondiente
+* `q5` a `q8` $\rightarrow$ Animación intermitente del color
+* `q9` $\rightarrow$ Ciclo dinámico multicolor
+
+---
+
+## Requisitos e Instalación
+
+El proyecto requiere **Python 3.10+**.
+
+### 1. Clonar el repositorio
+```bash
+git clone <URL_DEL_REPOSITORIO>
+cd Trabajo-Fti-1
+```
+
+### 2. Instalar dependencias
 ```bash
 pip install automata-lib
 ```
 
-### 3. Instalar dependencias visuales (Opcional)
-Para generar y exportar el diagrama gráfico del autómata (`diagrama.png`), es necesario contar con Graphviz en tu sistema y las dependencias de visualización:
+*(Opcional) Si deseas regenerar `diagrama.png` usando Graphviz:*
 ```bash
-pip install 'automata-lib[visual]'
+pip install "automata-lib[visual]"
 ```
 
 ---
 
-## ⚙️ Especificación Formal del Autómata
+## 🖥️ Modos de Ejecución
 
-### 1. Estados ($S$)
-El autómata cuenta con 11 estados que representan las diferentes combinaciones de encendido, color y patrones:
+### 1. Interfaz Gráfica (Python / Tkinter)
+Ejecuta la simulación interactiva con tablero de control y visualización de la tira LED:
+```bash
+python interfaz_luces.py
+```
 
-| Estado | Significado |
-| :---: | :--- |
-| **$q_0$** | Apagado (Estado inicial y de aceptación) |
-| **$q_1$** | Blanco (Encendido) |
-| **$q_2$** | Rojo |
-| **$q_3$** | Verde |
-| **$q_4$** | Azul |
-| **$q_5$** | Intermitente Blanco |
-| **$q_6$** | Intermitente Rojo |
-| **$q_7$** | Intermitente Verde |
-| **$q_8$** | Intermitente Azul |
-| **$q_9$** | Patrón RGB / Arcoíris |
-| **$q_{10}$** | Menú de Patrones |
-
-### 2. Alfabeto ($\Sigma$)
-Los símbolos de entrada válidos que la máquina reconoce corresponden a las acciones del usuario:
-
-* **`e`**: Encender
-* **`a`**: Apagar
-* **`b`**: Blanco
-* **`r`**: Rojo
-* **`v`**: Verde
-* **`z`**: Azul
-* **`p`**: Menú de Patrones
-* **`i`**: Intermitente
-* **`g`**: RGB
-
-$$\Sigma = \{e, a, b, r, v, z, p, i, g\}$$
-
----
-
-## 🚀 Uso y Ejecución
-
-Para poner en marcha el simulador interactivo y generar automáticamente el diagrama de transiciones en formato PNG, ejecuta el script principal:
-
+### 2. Consola / Validación Teórica
+Para verificar la lógica del autómata por terminal o procesar cadenas de prueba:
 ```bash
 python luces.py
 ```
 
-Durante la ejecución, la consola te guiará permitiéndote ingresar letras o comandos de forma secuencial. El programa validará en tiempo real si la cadena de comandos es aceptada por el autómata y te indicará el estado actual del sistema lumínico.
+### 3. Simulador Web
+Abre directamente en tu navegador preferido el archivo:
+```text
+simulador_tira_led_moore.html
+```
+
+### 4. Simulación en JFLAP
+Puedes abrir el archivo "automata_Proyecto_Grupo8.jff" en **JFLAP** para realizar pruebas de cadenas paso a paso y visualizar la estructura de transiciones.
 
 ---
 
-## 📊 Diagrama de Transiciones
+## 📊 Diagrama del Autómata
 
-El script incluye llamadas a la función `show_diagram()` de `automata-lib`, la cual compila el comportamiento del AFND y genera una representación gráfica completa de los estados y sus respectivas transiciones.
+Grafico del Diagrama actual:
+![Diagrama del Autómata](diagrama.png)
