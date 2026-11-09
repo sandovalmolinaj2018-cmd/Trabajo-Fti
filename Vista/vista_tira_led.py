@@ -5,7 +5,7 @@ class VistaTiraLed:
         self.root = root
         self.controlador = None
         self.root.title("Simulador de Tira LED")
-        self.root.geometry("800x400")
+        self.root.geometry("800x450")
         self.root.configure(bg="#222222")
 
         # 1. ZONA SUPERIOR: Contenedor para los círculos de la tira LED
@@ -26,6 +26,10 @@ class VistaTiraLed:
 
     def set_controlador(self, controlador):
         self.controlador = controlador
+
+    def programar(self, ms, callback):
+        # Le permite al controlador pedir "llamame de nuevo en X ms"
+        self.root.after(ms, callback)
 
     def _crear_botones(self):
         # Botones del autómata de Color
@@ -54,6 +58,13 @@ class VistaTiraLed:
             btn = tk.Button(self.frame_brillo, text=texto, bg="#444444", fg="white", width=10,
                             command=lambda c=comando: self.enviar_comando(c))
             btn.pack(side="left", padx=5)
+
+                # Botón de historial (autómata de pila)
+        tk.Label(self.root, text="Historial:", bg="#222222", fg="white").pack(pady=(15, 0))
+        frame_historial = tk.Frame(self.root, bg="#222222")
+        frame_historial.pack(pady=5)
+        tk.Button(frame_historial, text="Deshacer", bg="#8b4513", fg="white", width=10,
+                  command=lambda: self.enviar_comando('d')).pack()
 
     def enviar_comando(self, comando):
         # Le avisa al controlador qué botón se apretó
