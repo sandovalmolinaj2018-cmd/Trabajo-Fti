@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 7.1.--><structure>
+	<type>moore</type>
+	<automaton>
+		<!--The list of states.-->
+		<state id="0" name="q0">
+			<x>670.0</x>
+			<y>277.0</y>
+			<initial/>
+			<output>Principal</output>
+		</state>
+		<state id="1" name="q5">
+			<x>149.0</x>
+			<y>159.0</y>
+			<output>Intermitente</output>
+		</state>
+		<state id="2" name="q9">
+			<x>806.0</x>
+			<y>46.0</y>
+			<output>Patron RGB</output>
+		</state>
+		<state id="3" name="q10">
+			<x>406.0</x>
+			<y>44.0</y>
+			<output>Selector Patron</output>
+		</state>
+		<!--The list of transitions.-->
+		<transition>
+			<from>3</from>
+			<to>1</to>
+			<read>z</read>
+			<transout>Intermitente</transout>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>0</to>
+			<read>b</read>
+			<transout>Principal</transout>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>0</to>
+			<read>a</read>
+			<transout>Principal</transout>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>3</to>
+			<read>p</read>
+			<transout>Selector Patron</transout>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>1</to>
+			<read>r</read>
+			<transout>Intermitente</transout>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>1</to>
+			<read>v</read>
+			<transout>Intermitente</transout>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>0</to>
+			<read>v</read>
+			<transout>Principal</transout>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>0</to>
+			<read>r</read>
+			<transout>Principal</transout>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>2</to>
+			<read>g</read>
+			<transout>Patron RGB</transout>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>1</to>
+			<read>b</read>
+			<transout>Intermitente</transout>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>0</to>
+			<read>z</read>
+			<transout>Principal</transout>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>1</to>
+			<read>i</read>
+			<transout>Intermitente</transout>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>i</read>
+			<transout>Intermitente</transout>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>0</to>
+			<read>z</read>
+			<transout>Principal</transout>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>2</to>
+			<read>g</read>
+			<transout>Patron RGB</transout>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>0</to>
+			<read>r</read>
+			<transout>Principal</transout>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>2</to>
+			<read>g</read>
+			<transout>Patron RGB</transout>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>0</to>
+			<read>v</read>
+			<transout>Principal</transout>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>3</to>
+			<read>p</read>
+			<transout>Selector Patron</transout>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>0</to>
+			<read>a</read>
+			<transout>Principal</transout>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>0</to>
+			<read>a</read>
+			<transout>Principal</transout>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>0</to>
+			<read>a</read>
+			<transout>Principal</transout>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>3</to>
+			<read>p</read>
+			<transout>Selector Patron</transout>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>0</to>
+			<read>b</read>
+			<transout>Principal</transout>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>3</to>
+			<read>p</read>
+			<transout>Selector Patron</transout>
+		</transition>
+	</automaton>
+</structure>
