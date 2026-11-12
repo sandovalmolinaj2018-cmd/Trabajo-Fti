@@ -45,6 +45,8 @@ class VistaTiraLed:
         self.botones_colores = []
         self.botones_brillo = []
         self.boton_deshacer = None
+        self.botones_presets_cargar = {}
+        self.botones_presets_guardar = {}
         self._crear_botones()
 
     def _on_frame_configure(self, event=None):
@@ -183,8 +185,8 @@ class VistaTiraLed:
         self.frame_brillo_fila.pack(pady=2)
 
         brillos = [
-            ('1', '1: Bajo'),
-            ('2', '2: Tenue'),
+            ('1', '1: Muy Bajo'),
+            ('2', '2: Bajo'),
             ('3', '3: Medio'),
             ('4', '4: Alto'),
             ('5', '5: Máximo'),
@@ -226,6 +228,75 @@ class VistaTiraLed:
         self.boton_deshacer.pack(side="left", padx=2)
         self.botones['d'] = self.boton_deshacer
 
+        # Panel Presets de Iluminación: 3 slots para guardar y restaurar estados
+        self.frame_presets = tk.LabelFrame(
+            self.scrollable_frame,
+            text=" Presets de Iluminación ",
+            bg="#222222",
+            fg="white",
+            font=("Arial", 10, "bold"),
+            padx=6,
+            pady=4,
+            relief="groove"
+        )
+        self.frame_presets.pack(pady=4, padx=6, fill="x")
+
+        for slot in (1, 2, 3):
+            frame_slot = tk.Frame(self.frame_presets, bg="#222222")
+            frame_slot.pack(pady=2)
+
+            lbl = tk.Label(
+                frame_slot,
+                text=f"Slot {slot}:",
+                bg="#222222",
+                fg="white",
+                font=("Arial", 9, "bold"),
+                width=7,
+                anchor="w"
+            )
+            lbl.pack(side="left", padx=3)
+
+            btn_cargar = tk.Button(
+                frame_slot,
+                text=f"⚡ P{slot}: Vacío",
+                bg="#374151",
+                fg="white",
+                activebackground="#4b5563",
+                activeforeground="white",
+                width=28,
+                relief="raised",
+                cursor="hand2",
+                command=lambda s=slot: self.cargar_preset(s)
+            )
+            btn_cargar.pack(side="left", padx=3)
+            self.botones_presets_cargar[slot] = btn_cargar
+
+            btn_guardar = tk.Button(
+                frame_slot,
+                text="💾 Guardar",
+                bg="#047857",
+                fg="white",
+                activebackground="#059669",
+                activeforeground="white",
+                width=10,
+                relief="raised",
+                cursor="hand2",
+                command=lambda s=slot: self.guardar_preset(s)
+            )
+            btn_guardar.pack(side="left", padx=3)
+            self.botones_presets_guardar[slot] = btn_guardar
+
+        # Etiqueta de retroalimentación para acciones de presets
+        self.lbl_mensaje_presets = tk.Label(
+            self.frame_presets,
+            text="",
+            bg="#222222",
+            fg="#f87171",
+            font=("Arial", 9, "italic")
+        )
+        self.lbl_mensaje_presets.pack(pady=2)
+
+
     def enviar_comando(self, comando):
         # Le avisa al controlador qué botón se apretó
         if self.controlador:
@@ -247,11 +318,11 @@ class VistaTiraLed:
     def actualizar_luces(self, colores_tira, estado_brillo):
         # Factor de intensidad según el estado del autómata de brillo
         factores = {
-            "Bajo": 0.2,
-            "Tenue": 0.4,
+            "Muy Bajo": 0.2,
+            "Bajo": 0.4,
             "Medio": 0.6,
             "Alto": 0.8,
-            "Maximo": 1.0
+            "Maximo": 1.0,
         }
         factor = factores.get(estado_brillo, 1.0)
         
@@ -267,3 +338,34 @@ class VistaTiraLed:
 
             color_final = f"#{r:02x}{g:02x}{b:02x}"
             canvas.itemconfig(foco, fill=color_final)
+
+    def cargar_preset(self, slot):
+        if self.controlador:
+            self.controlador.cargar_preset(slot)
+
+    def guardar_preset(self, slot):
+        if self.controlador:
+            self.controlador.guardar_preset(slot)
+
+    def actualizar_texto_preset(self, slot, texto):
+        try:
+            slot_num = int(slot)
+        except (ValueError, TypeError):
+            slot_num = slot
+
+        try:
+            if slot_num in self.botones_presets_cargar:
+                self.botones_presets_cargar[slot_num].configure(text=texto)
+        except TypeError:
+            pass
+
+    def mostrar_mensaje_preset(self, texto, es_error=True):
+        try:
+            if hasattr(self, 'lbl_mensaje_presets') and self.lbl_mensaje_presets:
+                color = "#f87171" if es_error else "#34d399"
+                self.lbl_mensaje_presets.configure(text=texto, fg=color)
+                if hasattr(self, 'root') and self.root:
+                    self.root.after(4000, lambda: self.lbl_mensaje_presets.configure(text="") if hasattr(self, 'lbl_mensaje_presets') else None)
+        except Exception:
+            pass
+

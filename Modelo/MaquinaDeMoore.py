@@ -22,3 +22,9 @@ class MaquinaDeMoore:
 
     def obtener_estado_actual(self):
         return self.salidas[self.estado_actual]
+    
+    def fijar_estado(self, nuevo_estado):
+        if nuevo_estado in self.AFD.states:
+            self.estado_actual = nuevo_estado
+            return True
+        return False

@@ -24,3 +24,8 @@ htmlcov/
 
 # Archivos de instalación o binarios temporales
 *.msix
+
+# Configuraciones locales de presets
+# presets.json 
+#Borrar comentario para ignorar los presets del repositorio.
+#Y poder tener presets de forma local.

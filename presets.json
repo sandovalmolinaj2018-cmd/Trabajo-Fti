@@ -1,0 +1,23 @@
+[
+  {
+    "slot": 1,
+    "estado_foco": "q2",
+    "estado_brillo": "q4",
+    "nombre_color": "Rojo",
+    "nombre_brillo": "Maximo"
+  },
+  {
+    "slot": 2,
+    "estado_foco": "q8",
+    "estado_brillo": "q1",
+    "nombre_color": "Intermitente Azul",
+    "nombre_brillo": "Bajo"
+  },
+  {
+    "slot": 3,
+    "estado_foco": "q3",
+    "estado_brillo": "q3",
+    "nombre_color": "Verde",
+    "nombre_brillo": "Alto"
+  }
+]

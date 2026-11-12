@@ -28,3 +28,22 @@ class AutomataDePila(MaquinaDeMoore):
             if verbose:
                 print("No hay historial")
             return None
+
+    def restaurar_estado(self, nuevo_estado, apilar_previo=True, verbose=None):
+        if verbose is None:
+            verbose = self.verbose
+
+        if nuevo_estado not in self.AFD.states:
+            if verbose:
+             print(f"No se puede transicionar a ese estado, seguis en el estado {self.estado_actual}")
+            return False
+
+        if apilar_previo:
+            if verbose:
+             print(f"Agregando tu posicion actual a la pila {self.obtener_estado_actual()}")
+            self.pila.append(self.estado_actual)
+
+        self.estado_actual = nuevo_estado
+        if verbose:
+            print(f"Cambios de estado a {self.obtener_estado_actual()}")
+        return True
