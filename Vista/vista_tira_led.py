@@ -43,7 +43,6 @@ class VistaTiraLed:
         self.botones = {}
         self.botones_colores = []
         self.botones_brillo = []
-        self.boton_deshacer = None
         self.crear_botones()
 
     def ajustar_scroll(self, event=None):
@@ -163,10 +162,10 @@ class VistaTiraLed:
             self.botones[comando] = btn
             self.botones_colores.append(btn)
 
-        # panel de brillo y deshacer
+        # panel de brillo
         self.frame_brillo = tk.LabelFrame(
             self.scrollable_frame,
-            text=" Nivel de Brillo e Historial ",
+            text=" Nivel de Brillo ",
             bg="#222222",
             fg="white",
             font=("Arial", 10, "bold"),
@@ -181,8 +180,8 @@ class VistaTiraLed:
         self.frame_brillo_fila.pack(pady=2)
 
         brillos = [
-            ('1', '1: Bajo'),
-            ('2', '2: Tenue'),
+            ('1', '1: Muy bajo'),
+            ('2', '2: Bajo'),
             ('3', '3: Medio'),
             ('4', '4: Alto'),
             ('5', '5: Máximo'),
@@ -204,25 +203,6 @@ class VistaTiraLed:
             btn.pack(side="left", padx=2)
             self.botones[comando] = btn
             self.botones_brillo.append(btn)
-
-        # botón deshacer
-        self.frame_historial = tk.Frame(self.frame_brillo, bg="#222222")
-        self.frame_historial.pack(pady=2)
-
-        self.boton_deshacer = tk.Button(
-            self.frame_historial,
-            text="↶ Deshacer (d)",
-            bg="#9a3412",
-            fg="white",
-            activebackground="#c2410c",
-            activeforeground="white",
-            width=18,
-            relief="raised",
-            cursor="hand2",
-            command=lambda: self.mandar_comando('d')
-        )
-        self.boton_deshacer.pack(side="left", padx=2)
-        self.botones['d'] = self.boton_deshacer
 
     def mandar_comando(self, comando):
         # le pasa al controlador el botón apretado
@@ -246,11 +226,11 @@ class VistaTiraLed:
 
         # cuánto se atenúa el color según el brillo
         factores = {
-            "Bajo": 0.2,
-            "Tenue": 0.4,
+            "Muy bajo": 0.2,
+            "Bajo": 0.4,
             "Medio": 0.6,
             "Alto": 0.8,
-            "Maximo": 1.0
+            "Máximo": 1.0,
         }
         factor = factores.get(estado_brillo, 1.0)
         

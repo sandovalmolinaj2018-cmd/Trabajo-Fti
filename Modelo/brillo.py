@@ -1,8 +1,9 @@
 from automata.fa.dfa import DFA
 from Modelo.MaquinaDeMoore import MaquinaDeMoore
 
+
 class Brillo(MaquinaDeMoore):
-    def __init__(self):
+    def __init__(self, verbose=True):
         automata_brillo = DFA(
             states={'q0', 'q1', 'q2', 'q3', 'q4'},
             input_symbols={'1', '2', '3', '4', '5'},
@@ -11,19 +12,16 @@ class Brillo(MaquinaDeMoore):
                 'q1': {'1': 'q0', '2': 'q1', '3': 'q2', '4': 'q3', '5': 'q4'},
                 'q2': {'1': 'q0', '2': 'q1', '3': 'q2', '4': 'q3', '5': 'q4'},
                 'q3': {'1': 'q0', '2': 'q1', '3': 'q2', '4': 'q3', '5': 'q4'},
-                'q4': {'1': 'q0', '2': 'q1', '3': 'q2', '4': 'q3', '5': 'q4'}
+                'q4': {'1': 'q0', '2': 'q1', '3': 'q2', '4': 'q3', '5': 'q4'},
             },
-            initial_state='q4',  # Arranca en máximo por defecto
-            final_states={'q0', 'q1', 'q2', 'q3', 'q4'}    
+            initial_state='q4',  # Arranca en Máximo por defecto
+            final_states={'q0', 'q1', 'q2', 'q3', 'q4'},
         )
-
-        salidas_brillo ={
-            'q0': "Bajo",
-            'q1':"Tenue",
-            'q2':"Medio",
-            'q3':"Alto",
-            'q4':"Maximo"
-
+        salidas_brillo = {
+            'q0': "Muy bajo",
+            'q1': "Bajo",
+            'q2': "Medio",
+            'q3': "Alto",
+            'q4': "Máximo",
         }
-
-        super().__init__(automata_brillo,salidas_brillo)
+        super().__init__(automata_brillo, salidas_brillo, verbose=verbose)

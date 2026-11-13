@@ -49,10 +49,6 @@ class ControladorTiraLed:
         if comando in numeros_brillo:
             self.control_brillo.procesar_entrada(comando)
 
-        elif comando == 'd':
-            for foco in self.tira_focos:
-                foco.retroceder()
-
         else:
             transicion_valida = False
             for foco in self.tira_focos:
@@ -66,21 +62,16 @@ class ControladorTiraLed:
 
     def refrescar(self):
         colores_para_pintar = []
-
         for i, foco in enumerate(self.tira_focos):
-            estado_texto = foco.obtener_estado_actual()
+            estado_texto = foco.obtener_salida_actual()
             color_foco = self.colores_tk.get(estado_texto, "black")
-
             if estado_texto.startswith("Intermitente"):
-                # Si es par prende, sino se apaga
                 if self.fase % 2 == 1:
                     color_foco = "black"
-
             elif estado_texto == "Patron RGB":
-                # Genera el efecto de ola
                 color_foco = self.secuencia_rgb[(self.fase + i) % len(self.secuencia_rgb)]
-
             colores_para_pintar.append(color_foco)
 
-        estado_brillo = self.control_brillo.obtener_estado_actual()
+        # Brillo es una Máquina de Moore independiente del control de color
+        estado_brillo = self.control_brillo.obtener_salida_actual()
         self.vista.pintar_focos(colores_para_pintar, estado_brillo)
