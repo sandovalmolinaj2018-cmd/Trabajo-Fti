@@ -1,24 +1,53 @@
 class MaquinaDeMoore:
-    def __init__(self, automataFinitoDeterministico, salidas_automata, verbose=True): ##Constructor
+    def __init__(self, automataFinitoDeterministico, salidas_automata, mostrar_mensaje_terminal=True): ##Constructor
         self.AFD = automataFinitoDeterministico
         self.salidas = salidas_automata
         self.estado_actual = self.AFD.initial_state
-        self.verbose = verbose
+        self.mostrar_mensaje_terminal = mostrar_mensaje_terminal
 
-    def procesar_entrada(self, simbolo, verbose=None):
-        if verbose is None:
-            verbose = self.verbose
-        transiciones_disponibles = self.AFD.transitions.get(self.estado_actual, {})
-
-        if simbolo in transiciones_disponibles:
-            self.estado_actual = transiciones_disponibles[simbolo]
-            if verbose:
-                print(f"Cambios de estado a {self.obtener_estado_actual()}")
-            return self.salidas[self.estado_actual]
+    def autorizado_transicion(self, simbolo):
+        if simbolo in self.AFD.transitions[self.estado_actual]:
+            return True
         else:
-            if verbose:
-                print(f"No se puede transicionar a ese estado, seguis en el estado {self.estado_actual}")
+            return False
+
+    def obtener_caminos_posibles(self):
+        if self.estado_actual in self.afd.transitions:
+            return self.afd.transitions[self.estado_actual]
+        else:
+            return {}
+
+    def obtener_salida(self):
+        return self.salidas[self.estado_actual]
+
+    def transicionar(self, simbolo_entrada, mostrar_mensaje_terminal=None):
+        if mostrar_mensaje_terminal is None:
+            mostrar_mensaje_terminal= self.mostrar_mensaje_terminal
+
+        if self.autorizado_transicion(simbolo_entrada):
+            self.estado_actual = self.afd.transitions[self.estado_actual][simbolo_entrada]
+            if mostrar_mensaje_terminal == True:
+                print("Transicion: ")
+                print("Entrada: " + str(simbolo_entrada))
+                print("Estado Actual " + str(self.estado_actual))
+                print("Salida: " + str(self.obtener_salida()))
+            return self.obtener_salida
+        else:
+            if mostrar_mensaje_terminal == True:
+                print("La transicion no existe para la entrada de: " + str(simbolo_entrada))
+                print("Seguis en " + str(simbolo_entrada))
+                print("Salida: " + str(self.obtener_salida))
             return None
 
     def obtener_estado_actual(self):
         return self.salidas[self.estado_actual]
+
+    def fijar_estado(self, nuevo_estado):
+        if nuevo_estado in self.AFD.states:
+            self.estado_actual = nuevo_estado
+            print("El automata ahora se encuntra en: " + str(self.estado_actual))
+            print("La salida es: " + str(self.obtener_salida))
+            return True
+        else:
+            print("Error no se puede poner el automata en ese estado")
+            return False
