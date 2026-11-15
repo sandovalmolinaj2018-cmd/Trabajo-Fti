@@ -1,7 +1,6 @@
 from automata.fa.dfa import DFA
 from Modelo.MaquinaDeMoore import MaquinaDeMoore
 
-
 class Brillo(MaquinaDeMoore):
     def __init__(self, mostrar_mensajes=True):
         automata_brillo = DFA(
