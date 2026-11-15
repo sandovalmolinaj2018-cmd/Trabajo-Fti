@@ -1,5 +1,5 @@
+import json
 from Modelo.AutomataLinealmenteLimitado import AutomataLinealmenteLimitado
-
 
 class MemoriaPresets(AutomataLinealmenteLimitado):
 
@@ -34,3 +34,21 @@ class MemoriaPresets(AutomataLinealmenteLimitado):
             valores_iniciales=valores_iniciales,
             mostrar_mensajes=mostrar_mensajes
         )
+
+    def guardar_en_archivo(self):
+        archivo = open("presets.json", "w")
+        json.dump(self.cinta[1:-1], archivo)
+        archivo.close()
+
+    def cargar_desde_archivo(self):
+        try:
+            archivo = open("presets.json", "r")
+        except FileNotFoundError:
+            return
+
+        datos = json.load(archivo)
+        archivo.close()
+
+        for i in range(len(datos)):
+            if datos[i] is not None:
+                self.cinta[i + 1] = datos[i]

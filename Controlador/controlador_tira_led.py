@@ -20,7 +20,7 @@ class ControladorTiraLed:
 
         self.control_brillo = Brillo(mostrar_mensajes=True)
         self.memoria_all = MemoriaPresets(mostrar_mensajes=True)
-
+        self.memoria_all.cargar_desde_archivo()
         # Datos para la animacion
         self.fase = 0
         self.intervalo_ms = 500
@@ -156,6 +156,7 @@ class ControladorTiraLed:
 
         exito = self.memoria_all.escribir_en_slot(identificador_slot, datos_preset)
         if exito == True:
+            self.memoria_all.guardar_en_archivo()
             self.sincronizar_botones_presets()
             self.refrescar()
             self.vista.mostrar_mensaje_preset("Preset " + str(identificador_slot) + " guardado: " + str(nombre_color), es_error=False)
