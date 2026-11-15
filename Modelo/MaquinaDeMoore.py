@@ -12,8 +12,8 @@ class MaquinaDeMoore:
             return False
 
     def obtener_caminos_posibles(self):
-        if self.estado_actual in self.afd.transitions:
-            return self.afd.transitions[self.estado_actual]
+        if self.estado_actual in self.AFD.transitions:
+            return self.AFD.transitions[self.estado_actual]
         else:
             return {}
 
@@ -25,7 +25,7 @@ class MaquinaDeMoore:
             mostrar_mensaje_terminal= self.mostrar_mensaje_terminal
 
         if self.autorizado_transicion(simbolo_entrada):
-            self.estado_actual = self.afd.transitions[self.estado_actual][simbolo_entrada]
+            self.estado_actual = self.AFD.transitions[self.estado_actual][simbolo_entrada]
             if mostrar_mensaje_terminal == True:
                 print("Transicion: ")
                 print("Entrada: " + str(simbolo_entrada))

@@ -1,14 +1,14 @@
 import tkinter as tk
 
+
 class VistaTiraLed:
     def __init__(self, root):
         self.root = root
         self.controlador = None
         self.root.title("Simulador de Tira LED")
-        self.root.geometry("760x560")
+        self.root.geometry("760x620")
         self.root.minsize(640, 420)
         self.root.configure(bg="#222222")
-
 
         self.main_canvas = tk.Canvas(self.root, bg="#222222", highlightthickness=0)
         self.scrollbar = tk.Scrollbar(self.root, orient="vertical", command=self.main_canvas.yview)
@@ -19,11 +19,8 @@ class VistaTiraLed:
             (0, 0), window=self.scrollable_frame, anchor="nw"
         )
 
-
         self.scrollable_frame.bind("<Configure>", self.ajustar_scroll)
         self.main_canvas.bind("<Configure>", self.ajustar_ancho)
-
-
         self.main_canvas.bind("<MouseWheel>", self.mover_scroll)
         self.main_canvas.bind("<Button-4>", self.mover_scroll)
         self.main_canvas.bind("<Button-5>", self.mover_scroll)
@@ -44,6 +41,8 @@ class VistaTiraLed:
         self.botones_colores = []
         self.botones_brillo = []
         self.boton_deshacer = None
+        self.botones_presets_cargar = {}
+
         self.crear_botones()
 
     def ajustar_scroll(self, event=None):
@@ -91,7 +90,6 @@ class VistaTiraLed:
             ('a', 'Apagar (a)', '#18181b', 'white', 13),
             ('b', 'Blanco (b)', '#f3f4f6', 'black', 13),
         ]
-
         for comando, texto, bg, fg, width in colores_r1:
             btn = tk.Button(
                 self.frame_colores_r1,
@@ -118,7 +116,6 @@ class VistaTiraLed:
             ('v', 'Verde (v)', '#16a34a', 'white', 13),
             ('z', 'Azul (z)', '#2563eb', 'white', 13),
         ]
-
         for comando, texto, bg, fg, width in colores_r2:
             btn = tk.Button(
                 self.frame_colores_r2,
@@ -143,9 +140,8 @@ class VistaTiraLed:
         colores_r3 = [
             ('i', 'Intermitente (i)', '#d97706', 'white', 15),
             ('p', 'Patrones (p)', '#7c3aed', 'white', 15),
-            ('g', 'RGB / Arcoíris (g)', '#db2777', 'white', 17),
+            ('g', 'RGB / Arcoiris (g)', '#db2777', 'white', 17),
         ]
-
         for comando, texto, bg, fg, width in colores_r3:
             btn = tk.Button(
                 self.frame_colores_r3,
@@ -185,9 +181,8 @@ class VistaTiraLed:
             ('2', '2: Tenue'),
             ('3', '3: Medio'),
             ('4', '4: Alto'),
-            ('5', '5: Máximo'),
+            ('5', '5: Maximo'),
         ]
-
         for comando, texto in brillos:
             btn = tk.Button(
                 self.frame_brillo_fila,
@@ -205,13 +200,13 @@ class VistaTiraLed:
             self.botones[comando] = btn
             self.botones_brillo.append(btn)
 
-        # botón deshacer
+        # boton deshacer
         self.frame_historial = tk.Frame(self.frame_brillo, bg="#222222")
         self.frame_historial.pack(pady=2)
 
         self.boton_deshacer = tk.Button(
             self.frame_historial,
-            text="↶ Deshacer (d)",
+            text="Deshacer (d)",
             bg="#9a3412",
             fg="white",
             activebackground="#c2410c",
@@ -224,27 +219,93 @@ class VistaTiraLed:
         self.boton_deshacer.pack(side="left", padx=2)
         self.botones['d'] = self.boton_deshacer
 
+        # panel de presets (ALL)
+        self.frame_presets = tk.LabelFrame(
+            self.scrollable_frame,
+            text=" Presets de Memoria (ALL) ",
+            bg="#222222",
+            fg="white",
+            font=("Arial", 10, "bold"),
+            padx=6,
+            pady=4,
+            relief="groove"
+        )
+        self.frame_presets.pack(pady=4, padx=6, fill="x")
+
+        slots = [('DEF', 'Slot DEF:'), (1, 'Slot P1:'), (2, 'Slot P2:'), (3, 'Slot P3:')]
+        for slot_id, texto_lbl in slots:
+            fila_s = tk.Frame(self.frame_presets, bg="#222222")
+            fila_s.pack(pady=2)
+
+            lbl = tk.Label(fila_s, text=texto_lbl, bg="#222222", fg="white", width=9, anchor="w")
+            lbl.pack(side="left", padx=2)
+
+            btn_cargar = tk.Button(
+                fila_s,
+                text=str(slot_id) + ": Vacio",
+                bg="#374151",
+                fg="white",
+                width=28,
+                relief="raised",
+                cursor="hand2",
+                command=lambda s=slot_id: self.cargar_preset(s)
+            )
+            btn_cargar.pack(side="left", padx=2)
+            self.botones_presets_cargar[slot_id] = btn_cargar
+
+            btn_guardar = tk.Button(
+                fila_s,
+                text="Guardar",
+                bg="#047857",
+                fg="white",
+                width=10,
+                relief="raised",
+                cursor="hand2",
+                command=lambda s=slot_id: self.guardar_preset(s)
+            )
+            btn_guardar.pack(side="left", padx=2)
+
+        self.lbl_mensaje_presets = tk.Label(
+            self.frame_presets,
+            text="",
+            bg="#222222",
+            fg="#34d399",
+            font=("Arial", 9)
+        )
+        self.lbl_mensaje_presets.pack(pady=2)
+
     def mandar_comando(self, comando):
-        # le pasa al controlador el botón apretado
         if self.controlador:
             self.controlador.recibir_comando(comando)
+
+    def cargar_preset(self, slot):
+        if self.controlador:
+            self.controlador.cargar_preset(slot)
+
+    def guardar_preset(self, slot):
+        if self.controlador:
+            self.controlador.guardar_preset(slot)
+
+    def actualizar_texto_preset(self, slot, texto):
+        if slot in self.botones_presets_cargar:
+            self.botones_presets_cargar[slot].configure(text=texto)
+
+    def mostrar_mensaje_preset(self, texto, es_error=True):
+        if es_error == True:
+            color = "#f87171"
+        else:
+            color = "#34d399"
+        self.lbl_mensaje_presets.configure(text=texto, fg=color)
 
     def dibujar_focos(self, cantidad):
         for _ in range(cantidad):
             c = tk.Canvas(self.frame_focos, width=60, height=60, bg="#222222", highlightthickness=0)
             c.pack(side="left", padx=5)
-            
-            # Foco
             foco = c.create_oval(5, 5, 55, 55, fill="black", outline="gray", width=2)
-            
-            # sombra
             sombra = c.create_oval(5, 5, 55, 55, fill="", outline="")
-            
             self.focos_canvas.append((c, foco, sombra))
 
     def pintar_focos(self, colores_tira, estado_brillo):
-
-        # cuánto se atenúa el color según el brillo
         factores = {
             "Bajo": 0.2,
             "Tenue": 0.4,
@@ -253,14 +314,12 @@ class VistaTiraLed:
             "Maximo": 1.0
         }
         factor = factores.get(estado_brillo, 1.0)
-        
+
         for i in range(len(self.focos_canvas)):
             canvas, foco, sombra = self.focos_canvas[i]
-
             r, g, b = self.root.winfo_rgb(colores_tira[i])
             r = int(r / 256 * factor)
             g = int(g / 256 * factor)
             b = int(b / 256 * factor)
-
             color_final = f"#{r:02x}{g:02x}{b:02x}"
             canvas.itemconfig(foco, fill=color_final)
