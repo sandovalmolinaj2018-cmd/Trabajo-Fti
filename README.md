@@ -1,154 +1,123 @@
-# Trabajo Práctico: Control de Iluminación Inteligente con Autómatas(FTI)
+# Sistema de Control de Tira LED mediante Autómatas Formales (`Trabajo-Fti`)
 
-Proyecto desarrollado para la cátedra **Fundamentos Teóricos de Informática (FTI)**.
+Aplicación de escritorio desarrollada en Python para la simulación y el control de una tira de luces LED inteligente, modelada íntegramente mediante la composición de tres máquinas abstractas de la jerarquía de Chomsky: un **Autómata de Moore**, un **Autómata de Pila Determinista (DPDA)** y un **Autómata Linealmente Acotado (ALL)**.
 
-El sistema modela y simula el funcionamiento de una tira de luces LED inteligente mediante la teoría de lenguajes formales y autómatas. El proyecto está construido bajo una arquitectura modular **Modelo-Vista-Controlador (MVC)** e integra **Autómatas Finitos Determinísticos (AFD)**, **Máquinas de Moore** y un **Autómata de Pila** para la gestión de historial y retroceso ("deshacer").
-
----
-
-## Integrantes
-
-* **Lucas Ruiz**
-* **Jordan Sandoval Molina**
-* **Matias Segurado**
+* **Institución:** Universidad Nacional de la Patagonia San Juan Bosco (UNPSJB) – Facultad de Ingeniería
+* **Cátedra:** Fundamentos Teóricos de Informática (FTI)
+* **Repositorio:** [github.com/sandovalmolinaj2018-cmd/Trabajo-Fti](https://github.com/sandovalmolinaj2018-cmd/Trabajo-Fti.git)
 
 ---
 
-## Novedades y Actualizaciones Recientes
+## 1. Arquitectura y Fundamentación Teórica
 
-* **Arquitectura Modelo-Vista-Controlador (MVC):** Desacoplamiento total entre la lógica formal de los autómatas (`Modelo/`), la interfaz gráfica interactiva (`Vista/`) y la orquestación de eventos (`Controlador/`).
-* **Autómata de Pila (`AutomataDePila` / Deshacer):** Implementación de una memoria de pila para almacenar estados previos y permitir la función de **retroceso / deshacer (`d`)** en la tira de luces.
-* **Autómata de Control de Brillo (`Brillo`):** Máquina de Moore independiente para gestionar 5 niveles de intensidad luminosa (`1` a `5`).
-* **Control Multicanal de Focos:** Simulación de una tira LED de múltiples focos sincronizados.
-* **Interfaz Gráfica con Tkinter:** Tablero interactivo con botones de comando, visualización en vivo de la tira LED, niveles de brillo e indicador de caminos de transición disponibles.
+El sistema desacopla el control operativo de la tira LED en tres niveles de capacidad computacional, evitando la explosión combinatoria de estados que ocurriría al intentar modelar memoria e historial únicamente con autómatas finitos.
 
----
+### A. Autómata de Moore (Control Base, Color e Intensidad)
+Gestiona los estados físicos inmediatos del dispositivo (encendido/apagado, selección de color base y regulación de intensidad lumínica). Al tratarse de una máquina de Moore, la salida emitida hacia la interfaz/hardware depende **exclusivamente del estado actual** y no de la transición entrante.
 
-## Descripción del Sistema
+* **Definición formal:** $M_{Moore} = (Q, \Sigma, \Delta, \delta, \lambda, q_0)$
+  * **Niveles de brillo ($\Delta_{brillo}$):** `{"Muy bajo", "Bajo", "Medio", "Alto", "Máximo"}`
+  * **Función de salida ($\lambda: Q \rightarrow \Delta$):** Determina el estado visual activo del foco/tira LED (`obtener_salida_actual()`).
 
-El sistema simula el funcionamiento de una tira LED inteligente hogareña controlada por eventos/comandos:
+### B. Autómata de Pila Determinista – DPDA (Historial y Función Deshacer)
+Permite almacenar cronológicamente las configuraciones de color y estado aplicadas por el usuario, habilitando la reversión secuencial de cambios (*Undo* / `retroceder`) sin perder el contexto previo.
 
-* **Encendido y Apagado:** Control general de energía.
-* **Colores estáticos:** Blanco, Rojo, Verde y Azul.
-* **Modos Intermitentes:** Efecto de parpadeo para cada uno de los colores.
-* **Modo Dinámico RGB:** Ciclo secuencial de colores en la tira.
-* **Control de Brillo:** Ajuste dinámico de intensidad en 5 niveles.
-* **Función Deshacer (Pila):** Capacidad de volver al estado anterior en el historial de navegación.
+* **Definición formal:** $M_{DPDA} = (Q, \Sigma, \Gamma, \delta, q_0, Z, F)$
+  * **Alfabeto de pila ($\Gamma$):** `{Z, C_1, C_2, ..., C_n}`, donde `Z` actúa como marca de fondo de pila (`[DEF]`).
+  * **Criterio de aceptación:** Por pila vacía / retorno al estado base sobre `Z`.
 
----
+| Operación | Símbolo de Entrada | Tope de Pila | Acción en Pila | Efecto en el Sistema |
+| :--- | :---: | :---: | :---: | :--- |
+| **Aplicar color / estado** | `c_i` | `X` | `PUSH(c_i)` sobre `X` | Actualiza la tira LED y guarda el estado en el historial. |
+| **Deshacer (`retroceder`)** | `'d'` | `c_i` ($\neq$ `Z`) | `POP` | Elimina el estado actual y restaura el color anterior en el tope. |
+| **Deshacer en base** | `'d'` | `Z` | Mantener `Z` | Mantiene el estado por defecto `[DEF]` sin desbordar la pila. |
 
-### 1. Autómata de Estados del Foco (`Foco` - DFA + Máquina de Moore + Pila)
+### C. Autómata Linealmente Acotado – ALL (Gestión de Presets en Memoria)
+Implementa una cinta finita acotada proporcionalmente al tamaño de la entrada para almacenar, recorrer y sobreescribir perfiles de iluminación predefinidos (*presets* de usuario) mediante un cabezal de lectura/escritura bidireccional.
 
-Modela los modos de iluminación del foco y hereda capacidades de pila para recordar el historial de estados:
-
-#### Conjunto de Estados ($Q$)
-
-* **`q0`**: Apagado (OFF)
-* **`q1`**: Blanco estático
-* **`q2`**: Rojo estático
-* **`q3`**: Verde estático
-* **`q4`**: Azul estático
-* **`q5`**: Intermitente blanco
-* **`q6`**: Intermitente rojo
-* **`q7`**: Intermitente verde
-* **`q8`**: Intermitente azul
-* **`q9`**: Patrón RGB dinámico
-* **`q10`**: Menú de patrones / Transición
-
-* `a`: Apagar
-* `b`: Blanco
-* `r`: Rojo
-* `v`: Verde
-* `z`: Azul
-* `i`: Activar modo intermitente
-* `g`: Activar modo RGB
-* `p`: Parada / Menú de patrones
-* `d`: Deshacer (retroceso en la pila)
-
-#### Salidas de la Máquina de Moore ($\Delta$)
-
-Cada estado genera un comportamiento visual determinado e independiente del canal de entrada:
-$$\lambda(q) \in \{\text{Apagado, Blanco, Rojo, Verde, Azul, Intermitente blanco, Intermitente rojo, Intermitente verde, Intermitente azul, Patron RGB, Menu Patrones}\}$$
-
-#### Comportamiento de Pila ($\Gamma$)
-
-Al realizar una transición válida, el estado actual se apila ($push$). La acción de retroceder ejecuta un desapilado ($pop$), restaurando el estado inmediatamente anterior del sistema.
+* **Definición formal:** $M_{ALL} = (Q, \Sigma, \Gamma, \delta, q_0, \triangleleft, \triangleright, F)$
+  * **Estructura de la cinta:** `['<', DEF, P1, P2, P3, '>']`
+  * **Marcadores de frontera:** `'<'` (límite izquierdo, $\triangleleft$) y `'>'` (límite derecho, $\triangleright$), que impiden que el cabezal salga del espacio asignado.
+  * **Movimientos del cabezal:** `I` (Izquierda), `D` (Derecha), `N` (Neutro / Lectura-Escritura en celda activa).
 
 ---
 
-### 2. Autómata de Control de Brillo (`Brillo` - Máquina de Moore)
-
-Controla los niveles de intensidad lumínica:
-
-* **Estados ($Q$):** $\{q_0, q_1, q_2, q_3, q_4\}$
-* **Alfabeto de Entrada ($\Sigma$):** $\{1, 2, 3, 4, 5\}$
-* **Salidas ($\Delta$):** $\{\text{Bajo}, \text{Tenue}, \text{Medio}, \text{Alto}, \text{Maximo}\}$
-
----
-
-## Estructura del Proyecto (MVC)
+## 2. Estructura del Proyecto
 
 ```text
-Trabajo-Fti-1/
-├── Modelo/
-│   ├── MaquinaDeMoore.py       # Clase base para autómatas con salidas
-│   ├── AutomataPila.py         # Extensión con memoria de pila (historial/deshacer)
-│   ├── foco.py                 # Definición del DFA de iluminación y sus salidas
-│   └── brillo.py               # Máquina de Moore para los 5 niveles de brillo
-├── Vista/
-│   └── vista_tira_led.py       # Interfaz gráfica de usuario con Tkinter
-├── Controlador/
-│   └── controlador_tira_led.py # Coordinador de la tira LED, animaciones y comandos
-├── main.py                     # Punto de entrada principal de la aplicación
-├── automata_Proyecto_Grupo8.jff # Modelo del autómata para JFLAP
-└── simulador_tira_led_moore.html # Simulador interactivo web
+Trabajo-Fti/
+├── models/                      # Modelos formales diseñados y validados en JFLAP
+│   └── Aut-Foco-PDA.jff         # Definición XML del Autómata de Pila Determinista
+├── src/                         # Código fuente principal (o raíz según rama activa)
+│   ├── main.py                  # Punto de entrada de la aplicación e interfaz gráfica
+│   ├── AutomataPila.py          # Implementación formal del DPDA y gestión de pila
+│   ├── Foco.py                  # Modelo de estados de salida (Autómata de Moore)
+│   ├── controlador_tira_led.py  # Orquestador entre la vista, el DPDA, Moore y el ALL
+│   └── ...                      # Implementación de la cinta acotada (ALL) y utilidades
+├── docs/                        # Diagramas de transición, informes y documentación teórica
+├── requirements.txt             # Dependencias de Python del proyecto
+└── README.md                    # Documentación técnica del repositorio
 ```
 
 ---
 
-## Requisitos e Instalación
+## 3. Requisitos e Instalación
 
-El proyecto requiere **Python 3.10+**.
+### Prerrequisitos del Sistema Operativo
+Antes de instalar los paquetes de Python, asegurate de contar con **Graphviz** (necesario para renderizar diagramas de estados con `automata-lib`) y **Tkinter** (interfaz gráfica):
 
-### 1. Clonar el repositorio
+* **Ubuntu / Debian:**
+  ```bash
+  sudo apt update
+  sudo apt install -y python3-venv python3-tk graphviz graphviz-dev pkg-config
+  ```
+* **Windows 10 / 11:**
+  1. Instalar Python 3.10+ marcando *"Add Python to PATH"*.
+  2. Instalar [Graphviz para Windows](https://graphviz.org/download/) y seleccionar *"Add Graphviz to the system PATH for all users"*.
 
-```bash
-git clone <URL_DEL_REPOSITORIO>
-cd Trabajo-Fti-1
-```
+### Configuración del Entorno Virtual
 
-### 2. Instalar dependencias
+1. **Clonar el repositorio:**
+   ```bash
+   git clone [https://github.com/sandovalmolinaj2018-cmd/Trabajo-Fti.git](https://github.com/sandovalmolinaj2018-cmd/Trabajo-Fti.git)
+   cd Trabajo-Fti
+   ```
 
-```bash
-pip install automata-lib
-```
+2. **Crear y activar el entorno virtual:**
+   ```bash
+   python3 -m venv .venv
+   # En Linux / macOS:
+   source .venv/bin/activate
+   # En Windows (PowerShell):
+   .venv\Scripts\Activate.ps1
+   ```
+
+3. **Instalar dependencias:**
+   ```bash
+   pip install --upgrade pip
+   pip install --default-timeout=100 -r requirements.txt
+   ```
+   *(Nota: Si no disponés de `requirements.txt` actualizado en la rama, instalá directamente `pip install --default-timeout=100 automata-lib graphviz`).*
 
 ---
 
-## Modos de Ejecución
+## 4. Uso y Ejecución
 
-### 1. Aplicación Principal (Arquitectura MVC + GUI)
-
-Inicia la aplicación completa con la interfaz gráfica en Tkinter:
+Con el entorno virtual activado, iniciá el panel de control de la tira LED ejecutando:
 
 ```bash
 python main.py
 ```
 
-### 2. Simulador Web
-
-Abre directamente en tu navegador preferido el archivo:
-
-```text
-simulador_tira_led_moore.html
-```
-
-### 3. Simulación y Validación en JFLAP
-
-Puedes abrir el archivo `automata_Proyecto_Grupo8.jff` en **JFLAP** para realizar pruebas de cadenas paso a paso y visualizar la estructura de transiciones.
+### Flujo de Interacción en la Interfaz
+1. **Encendido y Selección de Color (Moore + DPDA):** Al seleccionar un color o intensidad, el Autómata de Moore actualiza la salida visual y el DPDA apila la nueva configuración sobre la pila.
+2. **Reversión de Estado (DPDA):** Al presionar el botón **Deshacer / Retroceder** (entrada `'d'`), el sistema ejecuta `POP` y recupera el estado inmediato anterior hasta alcanzar `[DEF]`.
+3. **Navegación de Presets (ALL):** Mediante los controles de desplazamiento (`I` / `D`), el cabezal recorre las ranuras `DEF`, `P1`, `P2` y `P3` respetando los topes `'<'` y `'>'` para cargar o guardar escenas.
 
 ---
 
-## Diagrama de los Autómata
+## 5. Equipo de Desarrollo
 
-Grafico del Diagrama actual:
+* **Jordan David Sandoval Molina**
+* **Lucas Ruiz**
+* **Matias Segurado**
