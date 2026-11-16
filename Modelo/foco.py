@@ -10,15 +10,15 @@ class Foco(AutomataDePila):
             input_symbols={'e','a','b','r','v','z','p','i','g'},
             transitions={
                 'q0': {'e': 'q1'},
-                'q1': {'a': 'q0', 'r': 'q2', 'v': 'q3', 'z': 'q4', 'p': 'q10', 'i': 'q5', 'g': 'q9'},
+                'q1': {'a': 'q0', 'r': 'q2', 'v': 'q3', 'z': 'q4', 'p': 'q10', 'i': 'q5'},
                 'q2': {'a': 'q0', 'b': 'q1', 'v': 'q3', 'z': 'q4', 'p': 'q10', 'i': 'q6'},
                 'q3': {'a': 'q0', 'b': 'q1', 'r': 'q2', 'z': 'q4', 'p': 'q10', 'i': 'q7'},
                 'q4': {'a': 'q0', 'b': 'q1', 'r': 'q2', 'v': 'q3', 'p': 'q10', 'i': 'q8'},
-                'q5': {'a': 'q0', 'b': 'q1'},
-                'q6': {'a': 'q0', 'r': 'q2'},
-                'q7': {'a': 'q0', 'v': 'q3'},
-                'q8': {'a': 'q0', 'z': 'q4'},
-                'q9': {'a': 'q0', 'p': 'q10'},
+                'q5': {'a': 'q0', 'b': 'q1', 'p': 'q10'},
+                'q6': {'a': 'q0', 'r': 'q2','p': 'q10'},
+                'q7': {'a': 'q0', 'v': 'q3', 'p': 'q10'},
+                'q8': {'a': 'q0', 'z': 'q4', 'p': 'q10'},
+                'q9': {'a': 'q0', 'p': 'q10', 'p': 'q10'},
                 'q10': {'b': 'q5', 'r': 'q6', 'v': 'q7', 'z': 'q8', 'a': 'q0', 'g': 'q9'}
             },
             initial_state='q0',
@@ -84,7 +84,7 @@ class Foco(AutomataDePila):
 
         super().__init__(
             automata=dpda_foco,
-            diccionario_salida=traducido,
+            diccionario_salida=traducido, #Maquina de moore
             diccionario_pila=self.diccionario_pila,
             mostrar_mensaje_terminals=mostrar_mensajes
         )
