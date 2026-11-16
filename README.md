@@ -97,7 +97,6 @@ Antes de instalar los paquetes de Python, asegurate de contar con **Graphviz** (
    pip install --upgrade pip
    pip install --default-timeout=100 -r requirements.txt
    ```
-   *(Nota: Si no disponés de `requirements.txt` actualizado en la rama, instalá directamente `pip install --default-timeout=100 automata-lib graphviz`).*
 
 ---
 
