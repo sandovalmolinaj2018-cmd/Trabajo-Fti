@@ -7,8 +7,6 @@ class ControladorTiraLed:
     def __init__(self, vista):
         self.vista = vista
         self.vista.poner_controlador(self)
-
-        # Tira led de 5 focos
         self.cantidad_focos = 5
         self.tira_focos = []
         for i in range(self.cantidad_focos):
@@ -21,6 +19,7 @@ class ControladorTiraLed:
         self.control_brillo = Brillo(mostrar_mensajes=True)
         self.memoria_all = MemoriaPresets(mostrar_mensajes=True)
         self.memoria_all.cargar_desde_archivo()
+        
         # Datos para la animacion
         self.fase = 0
         self.intervalo_ms = 500

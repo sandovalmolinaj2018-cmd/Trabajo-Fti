@@ -1,4 +1,4 @@
-from automata.pda.dpda import DPDA  # Libreria del automata de pila
+from automata.pda.dpda import DPDA  
 
 
 class AutomataDePila():

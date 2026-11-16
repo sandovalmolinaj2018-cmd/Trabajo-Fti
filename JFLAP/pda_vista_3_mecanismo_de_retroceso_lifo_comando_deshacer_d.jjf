@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 7.1.--><structure>
+	<type>pda</type>
+	<automaton>
+		<!--Sub-diagrama 3 para Exposicion: Como funciona el comando 'd' (Deshacer) leyendo el tope de la pila-->
+		<state id="0" name="q0">
+			<x>100.0</x>
+			<y>300.0</y>
+			<label>Apagado</label>
+			<initial/>
+		</state>
+		<state id="1" name="q1">
+			<x>360.0</x>
+			<y>300.0</y>
+			<label>Blanco (1)</label>
+		</state>
+		<state id="2" name="q2">
+			<x>650.0</x>
+			<y>120.0</y>
+			<label>Rojo (2)</label>
+		</state>
+		<state id="3" name="q3">
+			<x>650.0</x>
+			<y>480.0</y>
+			<label>Verde (3)</label>
+		</state>
+		<state id="6" name="q6">
+			<x>960.0</x>
+			<y>120.0</y>
+			<label>Int. Rojo (6)</label>
+		</state>
+		<!--Recorrido de ida (hace PUSH en la pila)-->
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>e</read>
+			<pop>Z</pop>
+			<push>Z</push>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>2</to>
+			<read>r</read>
+			<pop/>
+			<push>1</push>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>6</to>
+			<read>i</read>
+			<pop/>
+			<push>2</push>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>3</to>
+			<read>v</read>
+			<pop/>
+			<push>2</push>
+		</transition>
+		<!--Recorrido de vuelta con 'd' (Deshacer): lee el tope de pila, hace POP (vacio) y vuelve al estado previo-->
+		<transition>
+			<from>6</from>
+			<to>2</to>
+			<read>d</read>
+			<pop>2</pop>
+			<push/>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>2</to>
+			<read>d</read>
+			<pop>2</pop>
+			<push/>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>1</to>
+			<read>d</read>
+			<pop>1</pop>
+			<push/>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>1</to>
+			<read>d</read>
+			<pop>1</pop>
+			<push/>
+		</transition>
+	</automaton>
+</structure>

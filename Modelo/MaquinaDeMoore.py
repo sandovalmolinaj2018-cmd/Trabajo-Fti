@@ -31,7 +31,7 @@ class MaquinaDeMoore:
                 print("Entrada: " + str(simbolo_entrada))
                 print("Estado Actual " + str(self.estado_actual))
                 print("Salida: " + str(self.obtener_salida()))
-            return self.obtener_salida
+            return self.obtener_salida()
         else:
             if mostrar_mensaje_terminal == True:
                 print("La transicion no existe para la entrada de: " + str(simbolo_entrada))
@@ -46,7 +46,7 @@ class MaquinaDeMoore:
         if nuevo_estado in self.AFD.states:
             self.estado_actual = nuevo_estado
             print("El automata ahora se encuntra en: " + str(self.estado_actual))
-            print("La salida es: " + str(self.obtener_salida))
+            print("La salida es: " + str(self.obtener_salida()))
             return True
         else:
             print("Error no se puede poner el automata en ese estado")
