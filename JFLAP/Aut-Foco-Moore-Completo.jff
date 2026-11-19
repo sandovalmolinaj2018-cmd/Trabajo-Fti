@@ -1,339 +1,333 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 7.1.--><structure>
-	<type>moore</type>
-	<automaton>
-		<!--The list of states.-->
-		<state id="0" name="q0">
-			<x>150.0</x>
-			<y>360.0</y>
-			<initial/>
-			<output>Apagado</output>
-		</state>
-		<state id="1" name="q1">
-			<x>420.0</x>
-			<y>120.0</y>
-			<output>Blanco</output>
-		</state>
-		<state id="2" name="q2">
-			<x>680.0</x>
-			<y>120.0</y>
-			<output>Rojo</output>
-		</state>
-		<state id="3" name="q3">
-			<x>940.0</x>
-			<y>120.0</y>
-			<output>Verde</output>
-		</state>
-		<state id="4" name="q4">
-			<x>1200.0</x>
-			<y>120.0</y>
-			<output>Azul</output>
-		</state>
-		<state id="5" name="q5">
-			<x>420.0</x>
-			<y>600.0</y>
-			<output>Intermitente blanco</output>
-		</state>
-		<state id="6" name="q6">
-			<x>680.0</x>
-			<y>600.0</y>
-			<output>Intermitente rojo</output>
-		</state>
-		<state id="7" name="q7">
-			<x>940.0</x>
-			<y>600.0</y>
-			<output>Intermitente verde</output>
-		</state>
-		<state id="8" name="q8">
-			<x>1200.0</x>
-			<y>600.0</y>
-			<output>Intermitente azul</output>
-		</state>
-		<state id="9" name="q9">
-			<x>1420.0</x>
-			<y>240.0</y>
-			<output>Patron RGB</output>
-		</state>
-		<state id="10" name="q10">
-			<x>1420.0</x>
-			<y>480.0</y>
-			<output>Menu Patrones</output>
-		</state>
-		<!--The list of transitions.-->
-		<transition>
-			<from>0</from>
-			<to>1</to>
-			<read>e</read>
-			<transout>Blanco</transout>
-		</transition>
-		<transition>
-			<from>1</from>
-			<to>0</to>
-			<read>a</read>
-			<transout>Apagado</transout>
-		</transition>
-		<transition>
-			<from>1</from>
-			<to>2</to>
-			<read>r</read>
-			<transout>Rojo</transout>
-		</transition>
-		<transition>
-			<from>1</from>
-			<to>3</to>
-			<read>v</read>
-			<transout>Verde</transout>
-		</transition>
-		<transition>
-			<from>1</from>
-			<to>4</to>
-			<read>z</read>
-			<transout>Azul</transout>
-		</transition>
-		<transition>
-			<from>1</from>
-			<to>10</to>
-			<read>p</read>
-			<transout>Menu Patrones</transout>
-		</transition>
-		<transition>
-			<from>1</from>
-			<to>5</to>
-			<read>i</read>
-			<transout>Intermitente blanco</transout>
-		</transition>
-		<transition>
-			<from>1</from>
-			<to>9</to>
-			<read>g</read>
-			<transout>Patron RGB</transout>
-		</transition>
-		<transition>
-			<from>2</from>
-			<to>0</to>
-			<read>a</read>
-			<transout>Apagado</transout>
-		</transition>
-		<transition>
-			<from>2</from>
-			<to>1</to>
-			<read>b</read>
-			<transout>Blanco</transout>
-		</transition>
-		<transition>
-			<from>2</from>
-			<to>3</to>
-			<read>v</read>
-			<transout>Verde</transout>
-		</transition>
-		<transition>
-			<from>2</from>
-			<to>4</to>
-			<read>z</read>
-			<transout>Azul</transout>
-		</transition>
-		<transition>
-			<from>2</from>
-			<to>10</to>
-			<read>p</read>
-			<transout>Menu Patrones</transout>
-		</transition>
-		<transition>
-			<from>2</from>
-			<to>6</to>
-			<read>i</read>
-			<transout>Intermitente rojo</transout>
-		</transition>
-		<transition>
-			<from>3</from>
-			<to>0</to>
-			<read>a</read>
-			<transout>Apagado</transout>
-		</transition>
-		<transition>
-			<from>3</from>
-			<to>1</to>
-			<read>b</read>
-			<transout>Blanco</transout>
-		</transition>
-		<transition>
-			<from>3</from>
-			<to>2</to>
-			<read>r</read>
-			<transout>Rojo</transout>
-		</transition>
-		<transition>
-			<from>3</from>
-			<to>4</to>
-			<read>z</read>
-			<transout>Azul</transout>
-		</transition>
-		<transition>
-			<from>3</from>
-			<to>10</to>
-			<read>p</read>
-			<transout>Menu Patrones</transout>
-		</transition>
-		<transition>
-			<from>3</from>
-			<to>7</to>
-			<read>i</read>
-			<transout>Intermitente verde</transout>
-		</transition>
-		<transition>
-			<from>4</from>
-			<to>0</to>
-			<read>a</read>
-			<transout>Apagado</transout>
-		</transition>
-		<transition>
-			<from>4</from>
-			<to>1</to>
-			<read>b</read>
-			<transout>Blanco</transout>
-		</transition>
-		<transition>
-			<from>4</from>
-			<to>2</to>
-			<read>r</read>
-			<transout>Rojo</transout>
-		</transition>
-		<transition>
-			<from>4</from>
-			<to>3</to>
-			<read>v</read>
-			<transout>Verde</transout>
-		</transition>
-		<transition>
-			<from>4</from>
-			<to>10</to>
-			<read>p</read>
-			<transout>Menu Patrones</transout>
-		</transition>
-		<transition>
-			<from>4</from>
-			<to>8</to>
-			<read>i</read>
-			<transout>Intermitente azul</transout>
-		</transition>
-		<transition>
-			<from>5</from>
-			<to>0</to>
-			<read>a</read>
-			<transout>Apagado</transout>
-		</transition>
-		<transition>
-			<from>5</from>
-			<to>1</to>
-			<read>b</read>
-			<transout>Blanco</transout>
-		</transition>
-		<transition>
-			<from>5</from>
-			<to>10</to>
-			<read>p</read>
-			<transout>Menu Patrones</transout>
-		</transition>
-		<transition>
-			<from>6</from>
-			<to>0</to>
-			<read>a</read>
-			<transout>Apagado</transout>
-		</transition>
-		<transition>
-			<from>6</from>
-			<to>2</to>
-			<read>r</read>
-			<transout>Rojo</transout>
-		</transition>
-		<transition>
-			<from>6</from>
-			<to>10</to>
-			<read>p</read>
-			<transout>Menu Patrones</transout>
-		</transition>
-		<transition>
-			<from>7</from>
-			<to>0</to>
-			<read>a</read>
-			<transout>Apagado</transout>
-		</transition>
-		<transition>
-			<from>7</from>
-			<to>3</to>
-			<read>v</read>
-			<transout>Verde</transout>
-		</transition>
-		<transition>
-			<from>7</from>
-			<to>10</to>
-			<read>p</read>
-			<transout>Menu Patrones</transout>
-		</transition>
-		<transition>
-			<from>8</from>
-			<to>0</to>
-			<read>a</read>
-			<transout>Apagado</transout>
-		</transition>
-		<transition>
-			<from>8</from>
-			<to>4</to>
-			<read>z</read>
-			<transout>Azul</transout>
-		</transition>
-		<transition>
-			<from>8</from>
-			<to>10</to>
-			<read>p</read>
-			<transout>Menu Patrones</transout>
-		</transition>
-		<transition>
-			<from>9</from>
-			<to>0</to>
-			<read>a</read>
-			<transout>Apagado</transout>
-		</transition>
-		<transition>
-			<from>9</from>
-			<to>10</to>
-			<read>p</read>
-			<transout>Menu Patrones</transout>
-		</transition>
-		<transition>
-			<from>10</from>
-			<to>5</to>
-			<read>b</read>
-			<transout>Intermitente blanco</transout>
-		</transition>
-		<transition>
-			<from>10</from>
-			<to>6</to>
-			<read>r</read>
-			<transout>Intermitente rojo</transout>
-		</transition>
-		<transition>
-			<from>10</from>
-			<to>7</to>
-			<read>v</read>
-			<transout>Intermitente verde</transout>
-		</transition>
-		<transition>
-			<from>10</from>
-			<to>8</to>
-			<read>z</read>
-			<transout>Intermitente azul</transout>
-		</transition>
-		<transition>
-			<from>10</from>
-			<to>0</to>
-			<read>a</read>
-			<transout>Apagado</transout>
-		</transition>
-		<transition>
-			<from>10</from>
-			<to>9</to>
-			<read>g</read>
-			<transout>Patron RGB</transout>
-		</transition>
-	</automaton>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 7.1.--><structure>&#13;
+	<type>moore</type>&#13;
+	<automaton>&#13;
+		<!--The list of states.-->&#13;
+		<state id="0" name="q0">&#13;
+			<x>150.0</x>&#13;
+			<y>360.0</y>&#13;
+			<initial/>&#13;
+			<output>Apagado</output>&#13;
+		</state>&#13;
+		<state id="1" name="q1">&#13;
+			<x>420.0</x>&#13;
+			<y>120.0</y>&#13;
+			<output>Blanco</output>&#13;
+		</state>&#13;
+		<state id="2" name="q2">&#13;
+			<x>680.0</x>&#13;
+			<y>120.0</y>&#13;
+			<output>Rojo</output>&#13;
+		</state>&#13;
+		<state id="3" name="q3">&#13;
+			<x>940.0</x>&#13;
+			<y>120.0</y>&#13;
+			<output>Verde</output>&#13;
+		</state>&#13;
+		<state id="4" name="q4">&#13;
+			<x>1200.0</x>&#13;
+			<y>120.0</y>&#13;
+			<output>Azul</output>&#13;
+		</state>&#13;
+		<state id="5" name="q5">&#13;
+			<x>420.0</x>&#13;
+			<y>600.0</y>&#13;
+			<output>Intermitente blanco</output>&#13;
+		</state>&#13;
+		<state id="6" name="q6">&#13;
+			<x>680.0</x>&#13;
+			<y>600.0</y>&#13;
+			<output>Intermitente rojo</output>&#13;
+		</state>&#13;
+		<state id="7" name="q7">&#13;
+			<x>940.0</x>&#13;
+			<y>600.0</y>&#13;
+			<output>Intermitente verde</output>&#13;
+		</state>&#13;
+		<state id="8" name="q8">&#13;
+			<x>1200.0</x>&#13;
+			<y>600.0</y>&#13;
+			<output>Intermitente azul</output>&#13;
+		</state>&#13;
+		<state id="9" name="q9">&#13;
+			<x>1420.0</x>&#13;
+			<y>240.0</y>&#13;
+			<output>Patron RGB</output>&#13;
+		</state>&#13;
+		<state id="10" name="q10">&#13;
+			<x>1420.0</x>&#13;
+			<y>480.0</y>&#13;
+			<output>Menu Patrones</output>&#13;
+		</state>&#13;
+		<!--The list of transitions.-->&#13;
+		<transition>&#13;
+			<from>4</from>&#13;
+			<to>3</to>&#13;
+			<read>v</read>&#13;
+			<transout>Verde</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>2</from>&#13;
+			<to>4</to>&#13;
+			<read>z</read>&#13;
+			<transout>Azul</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>6</from>&#13;
+			<to>2</to>&#13;
+			<read>r</read>&#13;
+			<transout>Rojo</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>3</from>&#13;
+			<to>0</to>&#13;
+			<read>a</read>&#13;
+			<transout>Apagado</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>9</from>&#13;
+			<to>0</to>&#13;
+			<read>a</read>&#13;
+			<transout>Apagado</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>2</from>&#13;
+			<to>0</to>&#13;
+			<read>a</read>&#13;
+			<transout>Apagado</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>1</from>&#13;
+			<to>5</to>&#13;
+			<read>i</read>&#13;
+			<transout>Intermitente blanco</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>10</from>&#13;
+			<to>7</to>&#13;
+			<read>v</read>&#13;
+			<transout>Intermitente verde</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>3</from>&#13;
+			<to>4</to>&#13;
+			<read>z</read>&#13;
+			<transout>Azul</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>6</from>&#13;
+			<to>10</to>&#13;
+			<read>p</read>&#13;
+			<transout>Menu Patrones</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>4</from>&#13;
+			<to>8</to>&#13;
+			<read>i</read>&#13;
+			<transout>Intermitente azul</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>8</from>&#13;
+			<to>10</to>&#13;
+			<read>p</read>&#13;
+			<transout>Menu Patrones</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>10</from>&#13;
+			<to>5</to>&#13;
+			<read>b</read>&#13;
+			<transout>Intermitente blanco</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>10</from>&#13;
+			<to>6</to>&#13;
+			<read>r</read>&#13;
+			<transout>Intermitente rojo</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>0</from>&#13;
+			<to>1</to>&#13;
+			<read>e</read>&#13;
+			<transout>Blanco</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>5</from>&#13;
+			<to>10</to>&#13;
+			<read>p</read>&#13;
+			<transout>Menu Patrones</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>7</from>&#13;
+			<to>10</to>&#13;
+			<read>p</read>&#13;
+			<transout>Menu Patrones</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>1</from>&#13;
+			<to>10</to>&#13;
+			<read>p</read>&#13;
+			<transout>Menu Patrones</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>2</from>&#13;
+			<to>3</to>&#13;
+			<read>v</read>&#13;
+			<transout>Verde</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>1</from>&#13;
+			<to>2</to>&#13;
+			<read>r</read>&#13;
+			<transout>Rojo</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>10</from>&#13;
+			<to>9</to>&#13;
+			<read>g</read>&#13;
+			<transout>Patron RGB</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>4</from>&#13;
+			<to>0</to>&#13;
+			<read>a</read>&#13;
+			<transout>Apagado</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>5</from>&#13;
+			<to>1</to>&#13;
+			<read>b</read>&#13;
+			<transout>Blanco</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>4</from>&#13;
+			<to>2</to>&#13;
+			<read>r</read>&#13;
+			<transout>Rojo</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>1</from>&#13;
+			<to>0</to>&#13;
+			<read>a</read>&#13;
+			<transout>Apagado</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>3</from>&#13;
+			<to>7</to>&#13;
+			<read>i</read>&#13;
+			<transout>Intermitente verde</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>4</from>&#13;
+			<to>1</to>&#13;
+			<read>b</read>&#13;
+			<transout>Blanco</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>5</from>&#13;
+			<to>0</to>&#13;
+			<read>a</read>&#13;
+			<transout>Apagado</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>7</from>&#13;
+			<to>0</to>&#13;
+			<read>a</read>&#13;
+			<transout>Apagado</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>8</from>&#13;
+			<to>0</to>&#13;
+			<read>a</read>&#13;
+			<transout>Apagado</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>1</from>&#13;
+			<to>4</to>&#13;
+			<read>z</read>&#13;
+			<transout>Azul</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>4</from>&#13;
+			<to>10</to>&#13;
+			<read>p</read>&#13;
+			<transout>Menu Patrones</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>10</from>&#13;
+			<to>8</to>&#13;
+			<read>z</read>&#13;
+			<transout>Intermitente azul</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>8</from>&#13;
+			<to>4</to>&#13;
+			<read>z</read>&#13;
+			<transout>Azul</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>10</from>&#13;
+			<to>0</to>&#13;
+			<read>a</read>&#13;
+			<transout>Apagado</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>3</from>&#13;
+			<to>10</to>&#13;
+			<read>p</read>&#13;
+			<transout>Menu Patrones</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>9</from>&#13;
+			<to>10</to>&#13;
+			<read>p</read>&#13;
+			<transout>Menu Patrones</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>2</from>&#13;
+			<to>1</to>&#13;
+			<read>b</read>&#13;
+			<transout>Blanco</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>2</from>&#13;
+			<to>6</to>&#13;
+			<read>i</read>&#13;
+			<transout>Intermitente rojo</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>3</from>&#13;
+			<to>2</to>&#13;
+			<read>r</read>&#13;
+			<transout>Rojo</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>3</from>&#13;
+			<to>1</to>&#13;
+			<read>b</read>&#13;
+			<transout>Blanco</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>6</from>&#13;
+			<to>0</to>&#13;
+			<read>a</read>&#13;
+			<transout>Apagado</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>1</from>&#13;
+			<to>3</to>&#13;
+			<read>v</read>&#13;
+			<transout>Verde</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>2</from>&#13;
+			<to>10</to>&#13;
+			<read>p</read>&#13;
+			<transout>Menu Patrones</transout>&#13;
+		</transition>&#13;
+		<transition>&#13;
+			<from>7</from>&#13;
+			<to>3</to>&#13;
+			<read>v</read>&#13;
+			<transout>Verde</transout>&#13;
+		</transition>&#13;
+	</automaton>&#13;
 </structure>
