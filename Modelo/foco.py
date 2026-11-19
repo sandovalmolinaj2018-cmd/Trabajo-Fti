@@ -97,3 +97,26 @@ class Foco(AutomataDePila):
             caminos.append(estado)
 
         return caminos
+
+    def aceptar_pila_vacia(self,cadena):
+        if not cadena or not isinstance(cadena, str):
+            return False
+        pila_auxiliar = [self.Inicial_Pila]
+        for simbolo in reversed(cadena):
+            pila_auxiliar.append(simbolo)
+
+        estado_actual = self.AFD.initial_state
+
+        while pila_auxiliar[-1] != self.Inicial_Pila:
+            tope_pila = pila_auxiliar[-1]
+            caminos_posibles = self.AFD.transitions.get(estado_actual, {})
+            if tope_pila in caminos_posibles:
+                estado_actual = caminos_posibles[tope_pila]
+                pila_auxiliar.pop()
+            else:
+                return False
+
+        if pila_auxiliar[-1] == self.Inicial_Pila and estado_actual in self.AFD.final_states:
+            return True
+        else:
+            return False

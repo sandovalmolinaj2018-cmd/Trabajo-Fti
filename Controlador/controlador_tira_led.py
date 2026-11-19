@@ -48,7 +48,7 @@ class ControladorTiraLed:
             'q6': 'eri',
             'q7': 'evi',
             'q8': 'ezi',
-            'q9': 'eg',
+            'q9': 'epg',
             'q10': 'ep'
         }
 
@@ -173,6 +173,9 @@ class ControladorTiraLed:
             self.vista.mostrar_mensaje_preset("El slot " + str(identificador_slot) + " esta vacio", es_error=True)
             return False
 
+        if self.tira_focos[0].aceptar_pila_vacia(datos_preset.get("cadena_w", "")) == False:
+            self.vista.mostrar_mensaje_preset("Ocurrio un error con el preset", es_error=True)
+            return False
         self.consumir_preset_en_dpda(datos_preset)
         self.fase = 0
         self.refrescar()
