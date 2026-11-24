@@ -45,36 +45,75 @@ Dentro del menú de patrones se puede ingresar, `b`, `r`, `v` y `z` eligen el co
 
 ## Requisitos e instalación
 
-Hace falta Python 3.10 o superior y Tkinter. En Windows Tkinter suele venir con Python. En Ubuntu o Debian:
+El programa funciona igual en Linux y en Windows. Lo único que cambia entre uno y otro es cómo se instala Python, cómo se llama el comando al crear el entorno virtual y cómo se activa. Una vez activado el entorno, los comandos para instalar la librería y ejecutar son los mismos en los dos.
+
+### 1. Instalar Python
+
+Hace falta Python 3.10 o superior y Tkinter (la librería de la interfaz gráfica). Primero fijate si ya lo tenés instalado:
 
 ```bash
-sudo apt install python3-venv python3-tk
+# Linux
+python3 --version
+
+# Windows
+python --version
 ```
 
-Después:
+Si no lo tenés o la versión es más vieja:
+
+**Windows**
+1. Descargá el instalador desde [python.org/downloads](https://www.python.org/downloads/).
+2. Abrilo y, antes de apretar *Install Now*, marcá la casilla **"Add python.exe to PATH"**. Si no la marcás, después Windows no reconoce el comando `python`.
+3. Tkinter viene incluido en el instalador, no hay que hacer nada más.
+
+**Linux (Ubuntu / Debian)**
+
+```bash
+sudo apt update
+sudo apt install python3 python3-venv python3-pip python3-tk
+```
+
+### 2. Descargar el proyecto
+
+Con Git:
 
 ```bash
 git clone https://github.com/sandovalmolinaj2018-cmd/Trabajo-Fti.git
 cd Trabajo-Fti
-python3 -m venv .venv
 ```
 
-Activar el entorno virtual:
+Si no tenés Git, en la página del repositorio apretá el botón verde **Code > Download ZIP**, descomprimí la carpeta y abrí una terminal adentro de ella.
+
+### 3. Crear y activar el entorno virtual
+
+**Linux / macOS**
 
 ```bash
-# Linux / macOS
+python3 -m venv .venv
 source .venv/bin/activate
+```
 
-# Windows (PowerShell)
+**Windows (PowerShell)**
+
+```powershell
+python -m venv .venv
 .venv\Scripts\Activate.ps1
 ```
 
-Instalar la libreria y ejecutar:
+Si PowerShell tira un error de que la ejecución de scripts está deshabilitada, hay dos opciones: correr `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` y volver a intentar, o usar la terminal de CMD con `.venv\Scripts\activate.bat`.
+
+Cuando el entorno está activado se ve `(.venv)` al principio de la línea de la terminal.
+
+### 4. Instalar la librería y ejecutar (igual en Linux y Windows)
+
+Con el entorno activado:
 
 ```bash
 pip install automata-lib
 python main.py
 ```
+
+Conviene ejecutarlo siempre desde la carpeta del proyecto, porque ahí es donde se guarda el archivo de presets.
 
 ## Cómo se usa
 
